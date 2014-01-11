@@ -102,3 +102,5 @@
 #define OP_LD_NN_DE 0x11
 #define OP_LD_NN_HL 0x21
 #define OP_LD_NN_SP 0x31
+
+#define OP_LD_NN_HL 0x2A
