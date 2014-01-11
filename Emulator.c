@@ -157,7 +157,34 @@ int main()
 		case OP_LD_A_BC: _RAM[_RB_A << 8 | _RC_A] = _RA_A; break;
 		case OP_LD_A_DE: _RAM[_RD_A << 8 | _RE_A] = _RA_A; break;
 		case OP_LD_A_NN: _RAM[_RAM[_RPC + 2] << 8 | _RAM[_RPC + 1]] = _RA_A; break;
-		case OP_LD_I_A: 
+		case OP_LD_ED:
+		{
+						 switch (_RAM[_RPC + 1]){
+						 case OP_LD_I_A:
+							 _RA_A = _RIV;
+							 _RF_A |= (_RIV & (1 << 0x80)) << FLAG_S;
+							 _RF_A |= (_RIV == 0) << FLAG_Z;
+							 _RF_A |= 0 << FLAG_H;
+							 _RF_A |= _IFF2 << FLAG_P;
+							 _RF_A |= 0 << FLAG_N;
+							 break;
+						 case OP_LD_R_A:
+							 _RA_A = _RMR;
+							 _RF_A |= (_RMR & (1 << 0x80)) << FLAG_S;
+							 _RF_A |= (_RMR == 0) << FLAG_Z;
+							 _RF_A |= 0 << FLAG_H;
+							 _RF_A |= _IFF2 << FLAG_P;
+							 _RF_A |= 0 << FLAG_N;
+							 break;
+						 case OP_LD_A_I: _RIV = _RA_A; break;
+						 case OP_LD_A_R: _RMR = _RA_A; break;
+						 }
+		}
+			break;
+		case  OP_LD_NN_BC: _RB_A = _RAM[_RPC + 2]; _RC_A = _RAM[_RPC + 1]; break;
+		case  OP_LD_NN_DE: _RD_A = _RAM[_RPC + 2]; _RE_A = _RAM[_RPC + 1]; break;
+		case  OP_LD_NN_HL: _RH_A = _RAM[_RPC + 2]; _RL_A = _RAM[_RPC + 1]; break;
+		case  OP_LD_NN_SP: _RSP = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1]; break;
 
 		}
 

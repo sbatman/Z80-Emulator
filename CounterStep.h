@@ -22,4 +22,9 @@ void InitCounterStep()
 	CounterStep[OP_LD_IXD_R] = 3;
 	CounterStep[OP_LD_IYD_R] = 3;
 	CounterStep[OP_LD_NN_A] = 3;
+	CounterStep[OP_LD_ED] = 2;
+	CounterStep[OP_LD_NN_BC] = 3;
+	CounterStep[OP_LD_NN_DE] = 3;
+	CounterStep[OP_LD_NN_HL] = 3;
+	CounterStep[OP_LD_NN_SP] = 3;
 } 

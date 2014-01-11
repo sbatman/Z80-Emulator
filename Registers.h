@@ -31,6 +31,17 @@ word _RIY; //Index Register
 word _RSP; //StackPointer
 word _RPC; //Program Counter
 
+bool _IFF1;
+bool _IFF2;
+
+#define FLAG_S 7;
+#define FLAG_Z 6;
+#define FLAG_H 4;
+#define FLAG_P 2;
+#define FLAG_V 2;
+#define FLAG_N 1;
+#define FLAG_C 0;
+
 void ZeroRegisters()
 {
 	_RA_A=0;
