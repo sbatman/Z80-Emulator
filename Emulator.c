@@ -263,13 +263,13 @@ int main()
 								break;
 							case OP_MATH_ADD_HL_A:
 							{
-													 Math_Add_A_R(_RAM[_RIX + n], 0);
+													 Math_Add_A_R(_RAM[_RIY + n], 0);
 													 opcost = 3;
 							}
 								break;
 							case OP_MATH_ADC_HL_A:
 							{
-													 Math_Add_A_R(_RAM[_RIX + n], 1);
+													 Math_Add_A_R(_RAM[_RIY+ n], 1);
 													 opcost = 3;
 							}
 								break;
