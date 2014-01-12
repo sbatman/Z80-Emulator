@@ -20,3 +20,14 @@
 
 #define OP_MATH_ADC_N_A 0xCE
 #define OP_MATH_ADC_HL_A 0x8E
+
+#define OP_MATH_SUB_A_A 0x97
+#define OP_MATH_SUB_A_B 0x90
+#define OP_MATH_SUB_A_C 0x91
+#define OP_MATH_SUB_A_D 0x92
+#define OP_MATH_SUB_A_E 0x93
+#define OP_MATH_SUB_A_H 0x94
+#define OP_MATH_SUB_A_L 0x95
+
+#define OP_MATH_SUB_N_A 0xD6
+#define OP_MATH_SUB_HL_A 0x96

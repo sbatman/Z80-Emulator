@@ -135,3 +135,7 @@ void SetFlag(bool value, byte flag)
 {
 	_RF_A |= value << flag;
 }
+int GetFlag(byte flag)
+{
+	return (_RF_A >> flag) & 1;	 
+}
