@@ -124,6 +124,19 @@ int main()
 												  opcost = 4;
 							}
 								break;
+							case OP_LD_HL_NN:
+							{
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = (_RIX >> (8 * 1)) & 0xff;
+												_RAM[position + 1] = (_RIX >> (8 * 0)) & 0xff;
+												opcost = 4;
+							}
+							case OP_LD_HL_SP:
+							{
+												_RSP = _RIX;
+												opcost = 2;
+							}
+								break;
 							}
 		}
 			break;
@@ -165,6 +178,18 @@ int main()
 												  opcost = 4;
 							}
 								break;
+							case OP_LD_HL_NN:
+							{
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = (_RIY >> (8 * 1)) & 0xff;
+												_RAM[position + 1] = (_RIY >> (8 * 0)) & 0xff;
+												opcost = 4;
+							}
+							case OP_LD_HL_SP:
+							{
+												_RSP = _RIY;
+												opcost = 2;
+							}
 							}
 		}
 			break;
@@ -207,7 +232,7 @@ int main()
 						 case OP_LD_A_R: _RMR = _RA_A; break;
 						 case OP_LD_NN_DD_BC:
 						 {
-												int position = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
 												_RB_A = _RAM[position + 1];
 												_RC_A = _RAM[position];
 												opcost = 4;
@@ -215,7 +240,7 @@ int main()
 							 break;
 						 case OP_LD_NN_DD_DE:
 						 {
-												int position = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
 												_RD_A = _RAM[position + 1];
 												_RE_A = _RAM[position];
 												opcost = 4;
@@ -223,7 +248,7 @@ int main()
 							 break;
 						 case OP_LD_NN_DD_HL:
 						 {
-												int position = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
 												_RH_A = _RAM[position + 1];
 												_RL_A = _RAM[position];
 												opcost = 4;
@@ -231,8 +256,40 @@ int main()
 							 break;
 						 case OP_LD_NN_DD_SP:
 						 {
-												int position = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
 												_RSP = _RAM[position + 1] << 8 | _RAM[position];
+												opcost = 4;
+						 }
+							 break;
+						 case OP_LD_DD_NN_BC:
+						 {
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = _RC_A;
+												_RAM[position + 1] = _RB_A;
+												opcost = 4;
+						 }
+							 break;
+						 case OP_LD_DD_NN_DE:
+						 {
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = _RE_A;
+												_RAM[position + 1] = _RD_A;
+												opcost = 4;
+						 }
+							 break;
+						 case OP_LD_DD_NN_HL:
+						 {
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = _RL_A;
+												_RAM[position + 1] = _RH_A;
+												opcost = 4;
+						 }
+							 break;
+						 case OP_LD_DD_NN_SP:
+						 {
+												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+												_RAM[position] = (_RSP >> (8 * 1)) & 0xff;
+												_RAM[position + 1] = (_RSP >> (8 * 0)) & 0xff;
 												opcost = 4;
 						 }
 							 break;
@@ -250,8 +307,17 @@ int main()
 							  _RL_A = _RAM[position];
 		}
 			break;
-		}
 
+		case OP_LD_HL_NN:
+		{
+							int position = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+							_RAM[position] = _RL_A;
+							_RAM[position + 1] = _RH_A;
+		}
+			break;
+		case OP_LD_HL_SP: _RSP = _RH_A << 8 | _RL_A; break;
+
+		}
 		_RPC += opcost;
 
 	}

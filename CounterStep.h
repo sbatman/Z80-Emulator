@@ -27,5 +27,10 @@ void InitCounterStep()
 	CounterStep[OP_LD_NN_DE] = 3;
 	CounterStep[OP_LD_NN_HL] = 3;
 	CounterStep[OP_LD_NN_SP] = 3;
-	OP_LD_NN_HL_M = 3;
+	CounterStep[OP_LD_NN_HL_M] = 3;
+	CounterStep[OP_LD_NN_DD_BC] = 4;
+	CounterStep[OP_LD_NN_DD_DE] = 4;
+	CounterStep[OP_LD_NN_DD_HL] = 4;
+	CounterStep[OP_LD_NN_DD_SP] = 4;
+	CounterStep[OP_LD_HL_NN] = 3;
 } 
