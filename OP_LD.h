@@ -116,3 +116,5 @@
 #define OP_LD_DD_NN_DE 0x53
 #define OP_LD_DD_NN_HL 0x63
 #define OP_LD_DD_NN_SP 0x73
+
+#define OP_LD_HL_SP 0xF9

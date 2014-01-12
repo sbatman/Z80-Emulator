@@ -87,6 +87,7 @@
     <ClInclude Include="OP_LD.h" />
     <ClInclude Include="Ram.h" />
     <ClInclude Include="Registers.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

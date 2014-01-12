@@ -2,18 +2,27 @@
 #include "Ram.h"
 #include "Opcodes.h"
 #include "CounterStep.h"
+#include "Test.h"
+
+#include <stdio.h>
 
 int main()
 {
+	printf("INIT\n");
 	ZeroRegisters();
 	ZeroRam();
+	InitCounterStep();
+	printf("START\n");
+	PrepTest();
 
 	for (;;)
 	{
-		int opcost = CounterStep[_RAM[_RPC]];
-		switch (_RAM[_RPC])
+		int next = _RAM[_RPC];
+		int opcost = CounterStep[next];
+		if (next == OP_STOP) break;
+		switch (next)
 		{
-
+		
 		case OP_LD_A_A: _RA_A = _RA_A; break;
 		case OP_LD_B_A: _RA_A = _RB_A; break;
 		case OP_LD_C_A: _RA_A = _RC_A; break;
@@ -322,6 +331,9 @@ int main()
 
 	}
 
+	printf("STOPPED\n");
+	PostTest();
+	getchar();
 
 	return 0;
 }
