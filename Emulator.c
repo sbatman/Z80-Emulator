@@ -140,10 +140,26 @@ int main()
 												_RAM[position + 1] = (_RIX >> (8 * 0)) & 0xff;
 												opcost = 4;
 							}
+								break;
 							case OP_LD_HL_SP:
 							{
 												_RSP = _RIX;
 												opcost = 2;
+							}
+								break;
+							case OP_SK_PUSH_HL:
+							{
+												  _RAM[--_RSP] = (_RIX >> (8 * 0)) & 0xff;
+												  _RAM[--_RSP] = (_RIX >> (8 * 1)) & 0xff;
+												  opcost = 2;
+							}
+								break;
+							case OP_SK_POP_HL:
+							{
+												 byte A = _RAM[_RSP++];
+												 byte B = _RAM[_RSP++];
+												 _RIX = B << 8 | A;
+												 opcost = 2;
 							}
 								break;
 							}
@@ -194,11 +210,28 @@ int main()
 												_RAM[position + 1] = (_RIY >> (8 * 0)) & 0xff;
 												opcost = 4;
 							}
+								break;
 							case OP_LD_HL_SP:
 							{
 												_RSP = _RIY;
 												opcost = 2;
 							}
+								break;
+							case OP_SK_PUSH_HL:
+							{
+												  _RAM[--_RSP] = (_RIY >> (8 * 0)) & 0xff;
+												  _RAM[--_RSP] = (_RIY >> (8 * 1)) & 0xff;
+												  opcost = 2;
+							}
+								break;
+							case OP_SK_POP_HL:
+							{
+												 byte A = _RAM[_RSP++];
+												 byte B = _RAM[_RSP++];
+												 _RIY = B << 8 | A;
+												 opcost = 2;
+							}
+								break;
 							}
 		}
 			break;
@@ -223,7 +256,7 @@ int main()
 						 switch (_RAM[_RPC + 1]){
 						 case OP_LD_I_A:
 							 _RA_A = _RIV;
-							 _RF_A |= (_RIV & (1 << 0x80)) << FLAG_S;
+							 _RF_A |= ((_RIV & 0x80)!=0) << FLAG_S;
 							 _RF_A |= (_RIV == 0) << FLAG_Z;
 							 _RF_A |= 0 << FLAG_H;
 							 _RF_A |= _IFF2 << FLAG_P;
@@ -231,7 +264,7 @@ int main()
 							 break;
 						 case OP_LD_R_A:
 							 _RA_A = _RMR;
-							 _RF_A |= (_RMR & (1 << 0x80)) << FLAG_S;
+							 _RF_A |= ((_RIV & 0x80) != 0) << FLAG_S;
 							 _RF_A |= (_RMR == 0) << FLAG_Z;
 							 _RF_A |= 0 << FLAG_H;
 							 _RF_A |= _IFF2 << FLAG_P;
@@ -325,8 +358,83 @@ int main()
 		}
 			break;
 		case OP_LD_HL_SP: _RSP = _RH_A << 8 | _RL_A; break;
+		case OP_SK_PUSH_BC:
+		{
+							  _RAM[--_RSP] = _RB_A;
+							  _RAM[--_RSP] = _RC_A;
+		}
+			break;
+		case OP_SK_PUSH_DE:
+		{
+							  _RAM[--_RSP] = _RD_A;
+							  _RAM[--_RSP] = _RE_A;
+		}
+			break;
+		case OP_SK_PUSH_HL:
+		{
+							  _RAM[--_RSP] = _RH_A;
+							  _RAM[--_RSP] = _RL_A;
+		}
+			break;
+		case OP_SK_PUSH_AF:
+		{
+							  _RAM[--_RSP] = _RA_A;
+							  _RAM[--_RSP] = _RF_A;
+		}
+			break;
+		case OP_SK_POP_BC:
+		{
+							 _RC_A = _RAM[_RSP++];
+							 _RB_A = _RAM[_RSP++];
+		}
+			break;
+		case OP_SK_POP_DE:
+		{
+							 _RE_A = _RAM[_RSP++];
+							 _RD_A = _RAM[_RSP++];
+		}
+			break;
+		case OP_SK_POP_HL:
+		{
+							 _RL_A = _RAM[_RSP++];
+							 _RH_A = _RAM[_RSP++];
+		}
+			break;
+		case OP_SK_POP_AF:
+		{
+							 _RF_A = _RAM[_RSP++];
+							 _RA_A = _RAM[_RSP++];
+		}
+			break;
+		case OP_ETS_E_DE_HL:
+		{
+							   byte tempD = _RD_A;
+							   byte tempE = _RE_A;
+							   _RD_A = _RH_A;
+							   _RE_A = _RL_A;
+							   _RH_A = tempD;
+							   _RL_A = tempE;
 
 		}
+			break;
+		case OP_ETS_E_AF_AF:
+		{
+							   byte tempA = _RA_A;
+							   byte tempF = _RF_A;
+							   _RA_A = _RA_B;
+							   _RF_A = _RF_B;
+							   _RA_B = tempA;
+							   _RF_B = tempF;
+
+		}
+			break;
+		default:
+		{
+				   printf("Unkown opcode %i", _RAM[_RPC]);
+		}
+		}
+
+		
 		_RPC += opcost;
 
 	}

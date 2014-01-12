@@ -6,17 +6,8 @@
 void PrepTest()
 {
 	int x = 0;
-	_RAM[x++] = 0x3e;
-	_RAM[x++] = 0x01;
-	_RAM[x++] = 0x47;
-	_RAM[x++] = 0x06;
-	_RAM[x++] = 0x10;
-	_RAM[x++] = 0x0E;
-	_RAM[x++] = 0x10;
-	_RAM[x++] = 0x02;
-	_RAM[x++] = 0x3e;
-	_RAM[x++] = 0x00;
-	_RAM[x++] = 0x0A;
+	FILE * f = fopen("test.bin", "rb");
+	fread(_RAM, 1000, 1, f);
 }
 
 void PostTest()
@@ -28,5 +19,7 @@ void PostTest()
 	printf("_E%*i\n", 8, _RE_A);
 	printf("_H%*i\n", 8, _RH_A);
 	printf("_L%*i\n", 8, _RL_A);
-	printf("_Test%*i\n", 8, _RAM[0x1010]);
+	FILE * f = fopen("out.bin", "wb");
+	fwrite(_RAM, 1, 2000, f);
+	fclose(f);
 }

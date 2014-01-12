@@ -1,7 +1,7 @@
 #pragma once
 #include "Types.h"
 
-#define RAMLENGTH 43008
+#define RAMLENGTH 65536
 
 byte _RAM[RAMLENGTH];
 

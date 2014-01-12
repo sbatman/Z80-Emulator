@@ -1,0 +1,1 @@
+#define OP_ETS_E_DE_HL 0xEB
