@@ -33,4 +33,5 @@ void InitCounterStep()
 	CounterStep[OP_LD_NN_DD_HL] = 4;
 	CounterStep[OP_LD_NN_DD_SP] = 4;
 	CounterStep[OP_LD_HL_NN] = 3;
+	CounterStep[OP_MATH_ADD_N_A] = 2;
 } 

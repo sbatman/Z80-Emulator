@@ -86,6 +86,7 @@
     <ClInclude Include="Opcodes.h" />
     <ClInclude Include="OP_ETS.h" />
     <ClInclude Include="OP_LD.h" />
+    <ClInclude Include="OP_Math.h" />
     <ClInclude Include="OP_Stack.h" />
     <ClInclude Include="Ram.h" />
     <ClInclude Include="Registers.h" />

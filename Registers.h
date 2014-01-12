@@ -34,13 +34,13 @@ word _RPC; //Program Counter
 bool _IFF1;
 bool _IFF2;
 
-#define FLAG_S 7;
-#define FLAG_Z 6;
-#define FLAG_H 4;
-#define FLAG_P 2;
-#define FLAG_V 2;
-#define FLAG_N 1;
-#define FLAG_C 0;
+#define FLAG_S 7
+#define FLAG_Z 6
+#define FLAG_H 4
+#define FLAG_P 2
+#define FLAG_V 2
+#define FLAG_N 1
+#define FLAG_C 0
 
 void ZeroRegisters()
 {
@@ -66,4 +66,72 @@ void ZeroRegisters()
 	_RIY = 0;
 	_RSP = 0;
 	_RPC = 0;
+}
+
+word BCasWord()
+{
+	return _RB_A << 8 | _RC_A;
+}
+
+word DEasWord()
+{
+	return _RD_A << 8 | _RE_A;
+}
+
+word HLasWord()
+{
+	return _RH_A << 8 | _RL_A;
+}
+
+void DecrementBC()
+{
+	word currentvalue = BCasWord();
+	currentvalue--;
+	_RB_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RC_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void DecrementHL()
+{
+	word currentvalue = HLasWord();
+	currentvalue--;
+	_RH_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RL_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void DecrementDE()
+{
+	word currentvalue = DEasWord();
+	currentvalue--;
+	_RD_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RE_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void IncrementBC()
+{
+	word currentvalue = BCasWord();
+	currentvalue++;
+	_RB_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RC_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void IncrementHL()
+{
+	word currentvalue = HLasWord();
+	currentvalue++;
+	_RH_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RL_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void IncrementDE()
+{
+	word currentvalue = DEasWord();
+	currentvalue++;
+	_RD_A = (currentvalue >> (8 * 1)) & 0xff;
+	_RE_A = (currentvalue >> (8 * 0)) & 0xff;
+}
+
+void SetFlag(bool value, byte flag)
+{
+	_RF_A |= value << flag;
 }

@@ -6,8 +6,13 @@
 
 #include <stdio.h>
 
+void Math_Add_A_R(byte value, bool addCarry);
+
 int main()
 {
+
+
+
 	printf("INIT\n");
 	ZeroRegisters();
 	ZeroRam();
@@ -22,7 +27,7 @@ int main()
 		if (next == OP_STOP) break;
 		switch (next)
 		{
-		
+
 		case OP_LD_A_A: _RA_A = _RA_A; break;
 		case OP_LD_B_A: _RA_A = _RB_A; break;
 		case OP_LD_C_A: _RA_A = _RC_A; break;
@@ -162,6 +167,24 @@ int main()
 												 opcost = 2;
 							}
 								break;
+							case OP_ETS_E_HL_SP:
+							{
+												   _RAM[_RSP] = (_RIX >> (8 * 0)) & 0xff;
+												   _RAM[_RSP + 1] = (_RIX >> (8 * 1)) & 0xff;
+							}
+								break;
+							case OP_MATH_ADD_HL_A:
+							{
+													 Math_Add_A_R(_RAM[_RIX + n], 0);
+													 opcost = 3;
+							}
+								break;
+							case OP_MATH_ADC_HL_A:
+							{
+													 Math_Add_A_R(_RAM[_RIX + n], 1);
+													 opcost = 3;
+							}
+								break;
 							}
 		}
 			break;
@@ -232,6 +255,24 @@ int main()
 												 opcost = 2;
 							}
 								break;
+							case OP_ETS_E_HL_SP:
+							{
+												   _RAM[_RSP] = (_RIY >> (8 * 0)) & 0xff;
+												   _RAM[_RSP + 1] = (_RIY >> (8 * 1)) & 0xff;
+							}
+								break;
+							case OP_MATH_ADD_HL_A:
+							{
+													 Math_Add_A_R(_RAM[_RIX + n], 0);
+													 opcost = 3;
+							}
+								break;
+							case OP_MATH_ADC_HL_A:
+							{
+													 Math_Add_A_R(_RAM[_RIX + n], 1);
+													 opcost = 3;
+							}
+								break;
 							}
 		}
 			break;
@@ -256,7 +297,7 @@ int main()
 						 switch (_RAM[_RPC + 1]){
 						 case OP_LD_I_A:
 							 _RA_A = _RIV;
-							 _RF_A |= ((_RIV & 0x80)!=0) << FLAG_S;
+							 _RF_A |= ((_RIV & 0x80) != 0) << FLAG_S;
 							 _RF_A |= (_RIV == 0) << FLAG_Z;
 							 _RF_A |= 0 << FLAG_H;
 							 _RF_A |= _IFF2 << FLAG_P;
@@ -330,9 +371,146 @@ int main()
 						 case OP_LD_DD_NN_SP:
 						 {
 												int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-												_RAM[position] = (_RSP >> (8 * 1)) & 0xff;
-												_RAM[position + 1] = (_RSP >> (8 * 0)) & 0xff;
+												_RAM[position] = (_RSP >> (8 * 0)) & 0xff;
+												_RAM[position + 1] = (_RSP >> (8 * 1)) & 0xff;
 												opcost = 4;
+						 }
+							 break;
+
+						 case OP_ETS_LDI:
+						 {
+											_RAM[DEasWord()] = _RAM[HLasWord()];
+											IncrementHL();
+											IncrementDE();
+											DecrementBC();
+											_RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											_RF_A |= 0 << FLAG_H;
+											_RF_A |= 0 << FLAG_N;
+											opcost = 2;
+						 }
+							 break;
+						 case OP_ETS_LDIR:
+						 {
+											 _RAM[DEasWord()] = _RAM[HLasWord()];
+											 IncrementHL();
+											 IncrementDE();
+											 DecrementBC();
+											 _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											 _RF_A |= 0 << FLAG_H;
+											 _RF_A |= 0 << FLAG_N;
+											 opcost = 2;
+											 if ((BCasWord() - 1 != 0))_RPC -= 2;
+						 }
+							 break;
+						 case OP_ETS_LDD:
+						 {
+											_RAM[DEasWord()] = _RAM[HLasWord()];
+											DecrementHL();
+											DecrementDE();
+											DecrementBC();
+											_RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											_RF_A |= 0 << FLAG_H;
+											_RF_A |= 0 << FLAG_N;
+											opcost = 2;
+						 }
+							 break;
+						 case OP_ETS_LDDR:
+						 {
+											 _RAM[DEasWord()] = _RAM[HLasWord()];
+											 DecrementHL();
+											 DecrementDE();
+											 DecrementBC();
+											 _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											 _RF_A |= 0 << FLAG_H;
+											 _RF_A |= 0 << FLAG_N;
+											 opcost = 2;
+											 if ((BCasWord() - 1 != 0))_RPC -= 2;
+						 }
+							 break;
+						 case OP_ETS_CPI:
+						 {
+											if (_RAM[HLasWord()] == _RA_A)
+											{
+												_RF_A |= 1 << FLAG_Z;
+											}
+											else
+											{
+												_RF_A |= 0 << FLAG_Z;
+											}
+											DecrementBC();
+											IncrementHL();
+											_RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											_RF_A |= 1 << FLAG_N;
+											_RF_A |= 0 << FLAG_H;
+											_RF_A |= 0 << FLAG_S;
+											opcost = 2;
+						 }
+							 break;
+						 case OP_ETS_CPIR:
+						 {
+											 bool condition = _RAM[HLasWord()] == _RA_A;
+											 if (condition)
+											 {
+												 _RF_A |= 1 << FLAG_Z;
+											 }
+											 else
+											 {
+												 _RF_A |= 0 << FLAG_Z;
+											 }
+											 DecrementBC();
+											 IncrementHL();
+											 _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											 _RF_A |= 1 << FLAG_N;
+											 _RF_A |= 0 << FLAG_H;
+											 _RF_A |= 0 << FLAG_S;
+											 opcost = 2;
+											 if (condition && (BCasWord() - 1 != 0))
+											 {
+												 _RPC -= 2;
+											 }
+						 }
+							 break;
+						 case OP_ETS_CPD:
+						 {
+											if (_RAM[HLasWord()] == _RA_A)
+											{
+												_RF_A |= 1 << FLAG_Z;
+											}
+											else
+											{
+												_RF_A |= 0 << FLAG_Z;
+											}
+											DecrementBC();
+											DecrementHL();
+											_RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											_RF_A |= 1 << FLAG_N;
+											_RF_A |= 0 << FLAG_H;
+											_RF_A |= 0 << FLAG_S;
+											opcost = 2;
+						 }
+							 break;
+						 case OP_ETS_CPDR:
+						 {
+											 bool condition = _RAM[HLasWord()] == _RA_A;
+											 if (condition)
+											 {
+												 _RF_A |= 1 << FLAG_Z;
+											 }
+											 else
+											 {
+												 _RF_A |= 0 << FLAG_Z;
+											 }
+											 DecrementBC();
+											 DecrementHL();
+											 _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
+											 _RF_A |= 1 << FLAG_N;
+											 _RF_A |= 0 << FLAG_H;
+											 _RF_A |= 0 << FLAG_S;
+											 opcost = 2;
+											 if (condition && (BCasWord() - 1 != 0))
+											 {
+												 _RPC -= 2;
+											 }
 						 }
 							 break;
 						 }
@@ -428,13 +606,62 @@ int main()
 
 		}
 			break;
+		case OP_ETS_E_EXX:
+		{
+							 byte tempB = _RB_A;
+							 byte tempC = _RC_A;
+							 _RB_A = _RB_B;
+							 _RC_A = _RC_B;
+							 _RB_B = tempB;
+							 _RC_B = tempC;
+							 byte tempD = _RD_A;
+							 byte tempE = _RE_A;
+							 _RD_A = _RD_B;
+							 _RE_A = _RE_B;
+							 _RD_B = tempD;
+							 _RE_B = tempE;
+							 byte tempH = _RH_A;
+							 byte tempL = _RL_A;
+							 _RH_A = _RH_B;
+							 _RL_A = _RL_B;
+							 _RH_B = tempH;
+							 _RL_B = tempL;
+		}
+			break;
+		case OP_ETS_E_HL_SP:
+		{
+							   _RAM[_RSP] = _RL_A;
+							   _RAM[_RSP + 1] = _RH_A;
+		}
+			break;
+
+		case OP_MATH_ADD_A_A:Math_Add_A_R(_RA_A,0); break;
+		case OP_MATH_ADD_B_A:Math_Add_A_R(_RB_A,0); break;
+		case OP_MATH_ADD_C_A:Math_Add_A_R(_RC_A,0); break;
+		case OP_MATH_ADD_D_A:Math_Add_A_R(_RD_A,0); break;
+		case OP_MATH_ADD_E_A:Math_Add_A_R(_RE_A,0); break;
+		case OP_MATH_ADD_H_A:Math_Add_A_R(_RH_A,0); break;
+		case OP_MATH_ADD_L_A:Math_Add_A_R(_RL_A,0); break;
+		case OP_MATH_ADD_N_A:Math_Add_A_R(_RAM[_RPC + 1],0); break;
+		case OP_MATH_ADD_HL_A:Math_Add_A_R(_RAM[HLasWord()],0); break;
+
+		case OP_MATH_ADC_A_A:Math_Add_A_R(_RA_A, 1); break;
+		case OP_MATH_ADC_B_A:Math_Add_A_R(_RB_A, 1); break;
+		case OP_MATH_ADC_C_A:Math_Add_A_R(_RC_A, 1); break;
+		case OP_MATH_ADC_D_A:Math_Add_A_R(_RD_A, 1); break;
+		case OP_MATH_ADC_E_A:Math_Add_A_R(_RE_A, 1); break;
+		case OP_MATH_ADC_H_A:Math_Add_A_R(_RH_A, 1); break;
+		case OP_MATH_ADC_L_A:Math_Add_A_R(_RL_A, 1); break;
+		case OP_MATH_ADC_N_A:Math_Add_A_R(_RAM[_RPC + 1], 1); break;
+		case OP_MATH_ADC_HL_A:Math_Add_A_R(_RAM[HLasWord()], 1); break;
+
 		default:
 		{
 				   printf("Unkown opcode %i", _RAM[_RPC]);
 		}
 		}
 
-		
+
 		_RPC += opcost;
 
 	}
@@ -446,3 +673,18 @@ int main()
 	return 0;
 }
 
+void Math_Add_A_R(byte value, bool addCarry)
+{
+	byte result = value + _RA_A;
+	SetFlag((((value & 0x0F) + (_RA_A & 0x0F)) & 0x10) != 0, FLAG_H);
+	SetFlag(0, FLAG_N);
+	SetFlag(((result & 0x80) != 0), FLAG_S);
+	SetFlag(((result & 0x100) != 0), FLAG_C);
+	SetFlag(((result & 0xff) == 0), FLAG_Z);
+	int partASign = _RA_A & 0x80;
+	int partBSign = value & 0x80;
+	int resultSign = result & 0x80;
+	SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
+	_RA_A = result;
+	if (addCarry)_RA_A += ((result & 0x100) != 0);
+}

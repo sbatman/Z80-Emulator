@@ -49,5 +49,8 @@
     <ClInclude Include="OP_ETS.h">
       <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
+    <ClInclude Include="OP_Math.h">
+      <Filter>Header Files\Opcodes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
