@@ -965,7 +965,14 @@ int main()
 	}
    break;
 	case OP_RET: _RPC = Stack_Pop_Word(); break;
-
+	case OP_RET_NZ: if (GetFlag(FLAG_Z) == 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_Z: if (GetFlag(FLAG_Z) != 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_NC: if (GetFlag(FLAG_C) == 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_C: if (GetFlag(FLAG_C) != 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_PO: if (GetFlag(FLAG_P) == 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_PE: if (GetFlag(FLAG_P) != 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
+	case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
    default:
    {
 		   printf("Unkown opcode %i \n", _RAM[_RPC]);
