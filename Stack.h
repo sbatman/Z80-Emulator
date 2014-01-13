@@ -14,3 +14,10 @@ void Stack_Push_Word(word wordToPush)
  _RAM[--_RSP] = highOrder;
  _RAM[--_RSP] = lowOrder;
 }
+
+word Stack_Pop_Word()
+{
+ byte A = _RAM[_RSP++];
+ byte B = _RAM[_RSP++];
+ return B << 8 | A;
+}

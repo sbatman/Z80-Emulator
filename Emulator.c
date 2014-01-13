@@ -17,17 +17,19 @@ int main()
  InitCounterStep();
  printf("START\n");
  PrepTest();
-
+ int tick=0;
  for (;;)
  {
     int next = _RAM[_RPC];
 	if (next!=0)printf("%x   ", next);
   int opcost = CounterStep[next];
   //if (next == OP_STOP) break;
-  if (_RPC>100)
+  if (tick%10==0)
   {
-  break;
+  int g=7;
+  g=g*g;
   }
+  tick++;
   switch (next)
   {
    case OP_STOP:break;
@@ -962,6 +964,7 @@ int main()
 	 _RPC=0x38;
 	}
    break;
+	case OP_RET: _RPC = Stack_Pop_Word(); break;
 
    default:
    {
