@@ -34,6 +34,8 @@ word _RPC; //Program Counter
 bool _IFF1;
 bool _IFF2;
 
+byte _ParityLookupTable[255];
+
 #define FLAG_S 7
 #define FLAG_Z 6
 #define FLAG_H 4
@@ -41,6 +43,18 @@ bool _IFF2;
 #define FLAG_V 2
 #define FLAG_N 1
 #define FLAG_C 0
+
+// Thanks to the following line for the speed of this one : http://www-graphics.stanford.edu/~seander/bithacks.html#ParityParallel
+void BuildPairtyLookupTable()
+{
+ for (int x = 0; x < 255; x++)
+ {
+  int t = x;
+  t ^= t >> 4;
+  t &= 0xf;
+  _ParityLookupTable[x] = !((0x6996 >> t) & 1);
+ }
+}
 
 void ZeroRegisters()
 {

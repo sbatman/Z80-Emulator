@@ -12,6 +12,9 @@
     <Filter Include="Header Files\Opcodes">
       <UniqueIdentifier>{21c8c4c2-9b8f-4afe-bc52-ed093f8738bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Functions">
+      <UniqueIdentifier>{62f0c58f-9f36-4f5b-8f8f-788ace5c2509}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -51,6 +54,15 @@
     </ClInclude>
     <ClInclude Include="OP_Math.h">
       <Filter>Header Files\Opcodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="OP_CR.h">
+      <Filter>Header Files\Opcodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Stack.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

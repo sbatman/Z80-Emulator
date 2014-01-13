@@ -7,7 +7,7 @@ void PrepTest()
 {
 	int x = 0;
 	FILE * f = fopen("test.bin", "rb");
-	fread(_RAM, 1000, 1, f);
+	fread(_RAM, 10000, 1, f);
 }
 
 void PostTest()
@@ -20,6 +20,6 @@ void PostTest()
 	printf("_H%*i\n", 8, _RH_A);
 	printf("_L%*i\n", 8, _RL_A);
 	FILE * f = fopen("out.bin", "wb");
-	fwrite(_RAM, 1, 2000, f);
+	fwrite(_RAM, 1, RAMLENGTH, f);
 	fclose(f);
 }

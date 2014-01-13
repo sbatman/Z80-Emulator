@@ -3,16 +3,16 @@
 #include "Opcodes.h"
 #include "CounterStep.h"
 #include "Test.h"
+#include "Math.h"
+#include "Stack.h"
 
 #include <stdio.h>
-
-void Math_Add_A_R(byte value, bool addCarry);
-void Math_Sub_A_R(byte value, bool addCarry);
 
 int main()
 {
  printf("INIT\n");
  ZeroRegisters();
+ BuildPairtyLookupTable();
  ZeroRam();
  InitCounterStep();
  printf("START\n");
@@ -20,12 +20,17 @@ int main()
 
  for (;;)
  {
-  int next = _RAM[_RPC];
+    int next = _RAM[_RPC];
+	if (next!=0)printf("%x   ", next);
   int opcost = CounterStep[next];
-  if (next == OP_STOP) break;
+  //if (next == OP_STOP) break;
+  if (_RPC>100)
+  {
+  break;
+  }
   switch (next)
   {
-
+   case OP_STOP:break;
    case OP_LD_A_A: _RA_A = _RA_A; break;
    case OP_LD_B_A: _RA_A = _RB_A; break;
    case OP_LD_C_A: _RA_A = _RC_A; break;
@@ -195,6 +200,46 @@ int main()
 										   opcost = 3;
 					 }
 					  break;
+					 case OP_MATH_AND_HL_A:
+					 {
+										   Math_And_A_R(_RAM[_RIX + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_OR_HL_A:
+					 {
+										  Math_Or_A_R(_RAM[_RIX + n]);
+										  opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_XOR_HL_A:
+					 {
+										   Math_Xor_A_R(_RAM[_RIX + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_CP_HL_A:
+					 {
+										  Math_Cp_A_R(_RAM[_RIX + n]);
+										  opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_INC_HL_A:
+					 {
+										   Math_Inc_Byte(_RAM[_RIX + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_DEC_HL_A:
+					 {
+										   Math_Dec_Byte(_RAM[_RIX + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 default:
+					 {
+							 printf("Unkown opcode IX:%i \n", _RAM[_RPC + 1]);
+					 }
 					}
    }
 	break;
@@ -291,10 +336,50 @@ int main()
 					  break;
 					 case OP_MATH_SBC_HL_A:
 					 {
-										   Math_Sub_A_R(_RAM[_RIY + n], 01;
+										   Math_Sub_A_R(_RAM[_RIY + n], 1);
 										   opcost = 3;
 					 }
 					  break;
+					 case OP_MATH_AND_HL_A:
+					 {
+										   Math_And_A_R(_RAM[_RIY + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_OR_HL_A:
+					 {
+										  Math_Or_A_R(_RAM[_RIY + n]);
+										  opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_XOR_HL_A:
+					 {
+										   Math_Xor_A_R(_RAM[_RIY + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_CP_HL_A:
+					 {
+										  Math_Cp_A_R(_RAM[_RIY + n]);
+										  opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_INC_HL_A:
+					 {
+										   Math_Inc_Byte(_RAM[_RIY + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 case OP_MATH_DEC_HL_A:
+					 {
+										   Math_Dec_Byte(_RAM[_RIY + n]);
+										   opcost = 3;
+					 }
+					  break;
+					 default:
+					 {
+							 printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
+					 }
 					}
    }
 	break;
@@ -535,6 +620,22 @@ int main()
 								   }
 				  }
 				   break;
+				  case OP_NEG:
+				  {
+							  byte temp = _RA_A;
+							  _RA_A = 0;
+							  Math_Sub_A_R(temp, 0);
+							  SetFlag(1, FLAG_N);
+				  }
+				   break;
+				  case OP_MATH_ADC_BC_HL: Math_Add_SS_HL(BCasWord, 1); break;
+				  case OP_MATH_ADC_DE_HL: Math_Add_SS_HL(DEasWord, 1); break;
+				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord, 1); break;
+				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
+				  default:
+				  {
+						  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
+				  }
 				 }
    }
 	break;
@@ -696,8 +797,171 @@ int main()
    case OP_MATH_SBC_A_L:Math_Sub_A_R(_RL_A, 1); break;
    case OP_MATH_SBC_N_A:Math_Sub_A_R(_RAM[_RPC + 1], 1); break;
    case OP_MATH_SBC_HL_A:Math_Sub_A_R(_RAM[HLasWord()], 1); break;
+   
+   case OP_MATH_AND_A_A:Math_And_A_R(_RA_A); break;
+   case OP_MATH_AND_A_B:Math_And_A_R(_RB_A); break;
+   case OP_MATH_AND_A_C:Math_And_A_R(_RC_A); break;
+   case OP_MATH_AND_A_D:Math_And_A_R(_RD_A); break;
+   case OP_MATH_AND_A_E:Math_And_A_R(_RE_A); break;
+   case OP_MATH_AND_A_H:Math_And_A_R(_RH_A); break;
+   case OP_MATH_AND_A_L:Math_And_A_R(_RL_A); break;
+   case OP_MATH_AND_N_A:Math_And_A_R(_RAM[_RPC + 1]); break;
+   case OP_MATH_AND_HL_A:Math_And_A_R(_RAM[HLasWord()]); break;
 
+   case OP_MATH_OR_A_A:Math_Or_A_R(_RA_A); break;
+   case OP_MATH_OR_A_B:Math_Or_A_R(_RB_A); break;
+   case OP_MATH_OR_A_C:Math_Or_A_R(_RC_A); break;
+   case OP_MATH_OR_A_D:Math_Or_A_R(_RD_A); break;
+   case OP_MATH_OR_A_E:Math_Or_A_R(_RE_A); break;
+   case OP_MATH_OR_A_H:Math_Or_A_R(_RH_A); break;
+   case OP_MATH_OR_A_L:Math_Or_A_R(_RL_A); break;
+   case OP_MATH_OR_N_A:Math_Or_A_R(_RAM[_RPC + 1]); break;
+   case OP_MATH_OR_HL_A:Math_Or_A_R(_RAM[HLasWord()]); break;
 
+   case OP_MATH_XOR_A_A:Math_Xor_A_R(_RA_A); break;
+   case OP_MATH_XOR_A_B:Math_Xor_A_R(_RB_A); break;
+   case OP_MATH_XOR_A_C:Math_Xor_A_R(_RC_A); break;
+   case OP_MATH_XOR_A_D:Math_Xor_A_R(_RD_A); break;
+   case OP_MATH_XOR_A_E:Math_Xor_A_R(_RE_A); break;
+   case OP_MATH_XOR_A_H:Math_Xor_A_R(_RH_A); break;
+   case OP_MATH_XOR_A_L:Math_Xor_A_R(_RL_A); break;
+   case OP_MATH_XOR_N_A:Math_Xor_A_R(_RAM[_RPC + 1]); break;
+   case OP_MATH_XOR_HL_A:Math_Xor_A_R(_RAM[HLasWord()]); break;
+
+   case OP_MATH_CP_A_A:Math_Cp_A_R(_RA_A); break;
+   case OP_MATH_CP_A_B:Math_Cp_A_R(_RB_A); break;
+   case OP_MATH_CP_A_C:Math_Cp_A_R(_RC_A); break;
+   case OP_MATH_CP_A_D:Math_Cp_A_R(_RD_A); break;
+   case OP_MATH_CP_A_E:Math_Cp_A_R(_RE_A); break;
+   case OP_MATH_CP_A_H:Math_Cp_A_R(_RH_A); break;
+   case OP_MATH_CP_A_L:Math_Cp_A_R(_RL_A); break;
+   case OP_MATH_CP_N_A:Math_Cp_A_R(_RAM[_RPC + 1]); break;
+   case OP_MATH_CP_HL_A:Math_Cp_A_R(_RAM[HLasWord()]); break;
+
+   case OP_MATH_INC_A_A:_RA_A = Math_Inc_Byte(_RA_A); break;
+   case OP_MATH_INC_A_B:_RB_A = Math_Inc_Byte(_RB_A); break;
+   case OP_MATH_INC_A_C:_RC_A = Math_Inc_Byte(_RC_A); break;
+   case OP_MATH_INC_A_D:_RD_A = Math_Inc_Byte(_RD_A); break;
+   case OP_MATH_INC_A_E:_RE_A = Math_Inc_Byte(_RE_A); break;
+   case OP_MATH_INC_A_H:_RH_A = Math_Inc_Byte(_RH_A); break;
+   case OP_MATH_INC_A_L:_RL_A = Math_Inc_Byte(_RL_A); break;
+   case OP_MATH_INC_HL_A:_RAM[HLasWord()] = Math_Inc_Byte(_RAM[HLasWord()]); break;
+
+   case OP_MATH_DEC_A_A:_RA_A = Math_Dec_Byte(_RA_A); break;
+   case OP_MATH_DEC_A_B:_RB_A = Math_Dec_Byte(_RB_A); break;
+   case OP_MATH_DEC_A_C:_RC_A = Math_Dec_Byte(_RC_A); break;
+   case OP_MATH_DEC_A_D:_RD_A = Math_Dec_Byte(_RD_A); break;
+   case OP_MATH_DEC_A_E:_RE_A = Math_Dec_Byte(_RE_A); break;
+   case OP_MATH_DEC_A_H:_RH_A = Math_Dec_Byte(_RH_A); break;
+   case OP_MATH_DEC_A_L:_RL_A = Math_Dec_Byte(_RL_A); break;
+   case OP_MATH_DEC_HL_A:_RAM[HLasWord()] = Math_Dec_Byte(_RAM[HLasWord()]); break;
+
+   case OP_CPL:
+   {
+			   _RA_A = ~_RA_A;
+			   SetFlag(1, FLAG_H);
+			   SetFlag(1, FLAG_N);
+   }
+	break;
+   case OP_CCF:
+   {
+			   SetFlag(GetFlag(FLAG_C) == 0, FLAG_C);
+			   SetFlag(0, FLAG_N);
+   }
+	break;
+   case OP_SCF:
+   {
+			   SetFlag(1, FLAG_C);
+			   SetFlag(0, FLAG_N);
+			   SetFlag(0, FLAG_H);
+   }
+	break;
+   case OP_DI:
+   {
+			  _IFF1 = 0;
+			  _IFF2 = 0;
+   }
+	break;
+   case OP_EI:
+   {
+			  _IFF1 = 1;
+			  _IFF2 = 1;
+   }
+	break;
+
+   case OP_MATH_ADD_BC_HL: Math_Add_SS_HL(BCasWord, 0); break;
+   case OP_MATH_ADD_DE_HL: Math_Add_SS_HL(DEasWord, 0); break;
+   case OP_MATH_ADD_HL_HL: Math_Add_SS_HL(HLasWord, 0); break;
+   case OP_MATH_ADD_SP_HL: Math_Add_SS_HL(_RSP, 0); break;
+
+   case OP_MATH_INC_BC:
+   {
+					   word newValue = BCasWord() + 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_INC_DE:
+   {
+					   word newValue = DEasWord() + 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_INC_HL:
+   {
+					   word newValue = HLasWord() + 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_INC_SP:_RSP++; break;
+
+   case OP_MATH_DEC_BC:
+   {
+					   word newValue = BCasWord() - 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_DEC_DE:
+   {
+					   word newValue = DEasWord() - 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_DEC_HL:
+   {
+					   word newValue = HLasWord() - 1;
+					   _RB_A = (newValue >> (8 * 1)) & 0xff;
+					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+   }
+	break;
+   case OP_MATH_DEC_SP:_RSP--; break;
+   case OP_CR_CALL:
+   {
+				   word newRPC = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
+				   _RPC+=3;
+				   Stack_Push_Word(_RPC);
+				   _RPC = newRPC;
+				   opcost=0;
+   }
+	break;
+   case OP_JR_NZ_E:
+   {
+				   if (GetFlag(FLAG_Z)==0)
+				   {
+					_RPC += _RAM[_RPC+1];
+				   }
+   }
+	break;
+	case OP_RST_38H:
+	{
+	 Stack_Push_Word(_RPC);
+	 _RPC=0x38;
+	}
+   break;
 
    default:
    {
@@ -715,37 +979,4 @@ int main()
  getchar();
 
  return 0;
-}
-
-void Math_Add_A_R(byte value, bool addCarry)
-{
- byte result = value + _RA_A;
-
- SetFlag((((value & 0x0F) + (_RA_A & 0x0F)) & 0x10) != 0, FLAG_H);
- if (addCarry)result += GetFlag(FLAG_C);
- SetFlag(0, FLAG_N);
- SetFlag(((result & 0x80) != 0), FLAG_S);
- SetFlag(((result & 0x100) != 0), FLAG_C);
- SetFlag(((result & 0xff) == 0), FLAG_Z);
- int partASign = _RA_A & 0x80;
- int partBSign = value & 0x80;
- int resultSign = result & 0x80;
- SetFlag(partASign != partBSign && resultSign != partASign, FLAG_P);
- _RA_A = result;
-
-}
-void Math_Sub_A_R(byte value, bool addCarry)
-{
- byte result = value - _RA_A;
- SetFlag((((value & 0x0F) - (_RA_A & 0x0F)) & 0x10) != 0, FLAG_H);
- if (addCarry)result -= GetFlag(FLAG_C);
- SetFlag(1, FLAG_N);
- SetFlag(((result & 0x80) != 0), FLAG_S);
- SetFlag(((result & 0x100) != 0), FLAG_C);
- SetFlag(((result & 0xff) == 0), FLAG_Z);
- int partASign = _RA_A & 0x80;
- int partBSign = value & 0x80;
- int resultSign = result & 0x80;
- SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
- _RA_A = result;
 }
