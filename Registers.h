@@ -36,13 +36,13 @@ bool _IFF2;
 
 byte _ParityLookupTable[255];
 
-#define FLAG_S 7
-#define FLAG_Z 6
-#define FLAG_H 4
-#define FLAG_P 2
-#define FLAG_V 2
-#define FLAG_N 1
-#define FLAG_C 0
+#define FLAG_S 0x80
+#define FLAG_Z 0x40
+#define FLAG_H 0x10
+#define FLAG_P 0x04
+#define FLAG_V 0x04
+#define FLAG_N 0x02
+#define FLAG_C 0x01
 
 // Thanks to the following line for the speed of this one : http://www-graphics.stanford.edu/~seander/bithacks.html#ParityParallel
 void BuildPairtyLookupTable()
@@ -147,9 +147,14 @@ void IncrementDE()
 
 void SetFlag(bool value, byte flag)
 {
- _RF_A |= value << flag;
+ if (value){
+ _RF_A |=  flag;
+ }
+ else{
+  _RF_A &= ~flag;
+ }
 }
 int GetFlag(byte flag)
 {
- return (_RF_A >> flag) & 1;
+ return (_RF_A & flag) != 0;
 }

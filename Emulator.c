@@ -23,16 +23,23 @@ int main()
  for (;;)
  {
   system("cls");
+
   int next = _RAM[_RPC];
   printf("Current Addresss : %x \n", _RPC);
-  if (next != 0)printf("Next OpCode : %x \n", next);
+  printf("Next OpCode : %x \n", next);
   printf("_A%*i\n", 8, _RA_A);
   printf("_B%*i\n", 8, _RB_A);
   printf("_C%*i\n", 8, _RC_A);
   printf("_D%*i\n", 8, _RD_A);
   printf("_E%*i\n", 8, _RE_A);
   printf("_H%*i\n", 8, _RH_A);
-  printf("_L%*i\n", 8, _RL_A);
+  printf("_L%*i\n\n", 8, _RL_A);
+  printf("F_S%*i\n", 8, GetFlag(FLAG_S));
+  printf("F_Z%*i\n", 8, GetFlag(FLAG_Z));
+  printf("F_H%*i\n", 8, GetFlag(FLAG_H));
+  printf("F_P%*i\n", 8, GetFlag(FLAG_P));
+  printf("F_N%*i\n", 8, GetFlag(FLAG_N));
+  printf("F_C%*i\n", 8, GetFlag(FLAG_C));
 
   int opcost = CounterStep[next];
   //if (next == OP_STOP) break;
@@ -419,19 +426,19 @@ int main()
 				 switch (_RAM[_RPC + 1]){
 				  case OP_LD_I_A:
 				   _RA_A = _RIV;
-				   _RF_A |= ((_RIV & 0x80) != 0) << FLAG_S;
-				   _RF_A |= (_RIV == 0) << FLAG_Z;
-				   _RF_A |= 0 << FLAG_H;
-				   _RF_A |= _IFF2 << FLAG_P;
-				   _RF_A |= 0 << FLAG_N;
+				   SetFlag(((_RA_A & 0x80) != 0), FLAG_S);
+				   SetFlag((_RA_A == 0), FLAG_Z);
+				   SetFlag(0, FLAG_H);
+				   SetFlag(_IFF2, FLAG_P);
+				   SetFlag(0, FLAG_N);
 				   break;
 				  case OP_LD_R_A:
 				   _RA_A = _RMR;
-				   _RF_A |= ((_RIV & 0x80) != 0) << FLAG_S;
-				   _RF_A |= (_RMR == 0) << FLAG_Z;
-				   _RF_A |= 0 << FLAG_H;
-				   _RF_A |= _IFF2 << FLAG_P;
-				   _RF_A |= 0 << FLAG_N;
+				   SetFlag(((_RA_A & 0x80) != 0), FLAG_S);
+				   SetFlag((_RA_A == 0), FLAG_Z);
+				   SetFlag(0, FLAG_H);
+				   SetFlag(_IFF2, FLAG_P);
+				   SetFlag(0, FLAG_N);
 				   break;
 				  case OP_LD_A_I: _RIV = _RA_A; break;
 				  case OP_LD_A_R: _RMR = _RA_A; break;
@@ -505,9 +512,9 @@ int main()
 								  IncrementHL();
 								  IncrementDE();
 								  DecrementBC();
-								  _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								  _RF_A |= 0 << FLAG_H;
-								  _RF_A |= 0 << FLAG_N;
+								  SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								  SetFlag(0, FLAG_H);
+								  SetFlag(0, FLAG_N);
 								  opcost = 2;
 				  }
 				   break;
@@ -517,9 +524,9 @@ int main()
 								   IncrementHL();
 								   IncrementDE();
 								   DecrementBC();
-								   _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								   _RF_A |= 0 << FLAG_H;
-								   _RF_A |= 0 << FLAG_N;
+								   SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								   SetFlag(0, FLAG_H);
+								   SetFlag(0, FLAG_N);
 								   opcost = 2;
 								   if ((BCasWord() - 1 != 0))_RPC -= 2;
 				  }
@@ -530,9 +537,9 @@ int main()
 								  DecrementHL();
 								  DecrementDE();
 								  DecrementBC();
-								  _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								  _RF_A |= 0 << FLAG_H;
-								  _RF_A |= 0 << FLAG_N;
+								  SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								  SetFlag(0, FLAG_H);
+								  SetFlag(0, FLAG_N);
 								  opcost = 2;
 				  }
 				   break;
@@ -542,9 +549,9 @@ int main()
 								   DecrementHL();
 								   DecrementDE();
 								   DecrementBC();
-								   _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								   _RF_A |= 0 << FLAG_H;
-								   _RF_A |= 0 << FLAG_N;
+								   SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								   SetFlag(0, FLAG_H);
+								   SetFlag(0, FLAG_N);
 								   opcost = 2;
 								   if ((BCasWord() - 1 != 0))_RPC -= 2;
 				  }
@@ -561,30 +568,23 @@ int main()
 								  }
 								  DecrementBC();
 								  IncrementHL();
-								  _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								  _RF_A |= 1 << FLAG_N;
-								  _RF_A |= 0 << FLAG_H;
-								  _RF_A |= 0 << FLAG_S;
+								  SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								  SetFlag(0, FLAG_H);
+								  SetFlag(0, FLAG_N);
+								  SetFlag(0, FLAG_S);
 								  opcost = 2;
 				  }
 				   break;
 				  case OP_ETS_CPIR:
 				  {
-								   bool condition = _RAM[HLasWord()] == _RA_A;
-								   if (condition)
-								   {
-									_RF_A |= 1 << FLAG_Z;
-								   }
-								   else
-								   {
-									_RF_A |= 0 << FLAG_Z;
-								   }
-								   DecrementBC();
+								   bool condition = _RAM[HLasWord()] == _RA_A;								 
+									SetFlag(condition, FLAG_Z);
+								  								   DecrementBC();
 								   IncrementHL();
-								   _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								   _RF_A |= 1 << FLAG_N;
-								   _RF_A |= 0 << FLAG_H;
-								   _RF_A |= 0 << FLAG_S;
+								   SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								   SetFlag(0, FLAG_H);
+								   SetFlag(0, FLAG_N);
+								   SetFlag(0, FLAG_S);
 								   opcost = 2;
 								   if (condition && (BCasWord() - 1 != 0))
 								   {
@@ -594,40 +594,27 @@ int main()
 				   break;
 				  case OP_ETS_CPD:
 				  {
-								  if (_RAM[HLasWord()] == _RA_A)
-								  {
-								   _RF_A |= 1 << FLAG_Z;
-								  }
-								  else
-								  {
-								   _RF_A |= 0 << FLAG_Z;
-								  }
+								  
+								   SetFlag(_RAM[HLasWord()] == _RA_A, FLAG_Z);
 								  DecrementBC();
 								  DecrementHL();
-								  _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								  _RF_A |= 1 << FLAG_N;
-								  _RF_A |= 0 << FLAG_H;
-								  _RF_A |= 0 << FLAG_S;
+								  SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								  SetFlag(0, FLAG_H);
+								  SetFlag(0, FLAG_N);
+								  SetFlag(0, FLAG_S);
 								  opcost = 2;
 				  }
 				   break;
 				  case OP_ETS_CPDR:
 				  {
 								   bool condition = _RAM[HLasWord()] == _RA_A;
-								   if (condition)
-								   {
-									_RF_A |= 1 << FLAG_Z;
-								   }
-								   else
-								   {
-									_RF_A |= 0 << FLAG_Z;
-								   }
+								   SetFlag(condition, FLAG_Z);
 								   DecrementBC();
 								   DecrementHL();
-								   _RF_A |= (BCasWord() - 1 != 0) << FLAG_P;
-								   _RF_A |= 1 << FLAG_N;
-								   _RF_A |= 0 << FLAG_H;
-								   _RF_A |= 0 << FLAG_S;
+								   SetFlag((BCasWord() - 1 != 0), FLAG_P);
+								   SetFlag(0, FLAG_H);
+								   SetFlag(0, FLAG_N);
+								   SetFlag(0, FLAG_S);
 								   opcost = 2;
 								   if (condition && (BCasWord() - 1 != 0))
 								   {
@@ -975,7 +962,7 @@ int main()
    {
 				   Stack_Push_Word(_RPC);
 				   _RPC = 0x38;
-				   opcost=0;
+				   opcost = 0;
    }
 	break;
    case OP_RET: _RPC = Stack_Pop_Word(); break;
