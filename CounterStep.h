@@ -42,4 +42,5 @@ void InitCounterStep()
  CounterStep[OP_MATH_XOR_N_A]=2;
  CounterStep[OP_MATH_CP_N_A]=2;
  CounterStep[OP_JR_NZ_E]=2;
+ CounterStep[OP_RAS_JR_C_E]=2;
 }

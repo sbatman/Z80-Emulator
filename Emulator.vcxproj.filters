@@ -64,5 +64,8 @@
     <ClInclude Include="Stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OP_RaS.h">
+      <Filter>Header Files\Opcodes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

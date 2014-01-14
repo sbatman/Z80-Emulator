@@ -58,98 +58,98 @@ void BuildPairtyLookupTable()
 
 void ZeroRegisters()
 {
-	_RA_A=0;
-	_RB_A = 0;
-	_RD_A = 0;
-	_RH_A = 0;
-	_RF_A = 0;
-	_RB_A = 0;
-	_RE_A = 0;
-	_RL_A = 0;
-	_RA_B = 0;
-	_RB_B = 0;
-	_RD_B = 0;
-	_RH_B = 0;
-	_RF_B = 0;
-	_RB_B = 0;
-	_RE_B = 0;
-	_RL_B = 0;
-	_RIV = 0;
-	_RMR = 0;
-	_RIX = 0;
-	_RIY = 0;
-	_RSP = 0;
-	_RPC = 0;
+ _RA_A = 0xFF;
+ _RC_A = 0xFF;
+ _RD_A = 0xFF;
+ _RH_A = 0xFF;
+ _RF_A = 0xFF;
+ _RB_A = 0xFF;
+ _RE_A = 0xFF;
+ _RL_A = 0xFF;
+ _RA_B = 0xFF;
+ _RC_B = 0xFF;
+ _RD_B = 0xFF;
+ _RH_B = 0xFF;
+ _RF_B = 0xFF;
+ _RB_B = 0xFF;
+ _RE_B = 0xFF;
+ _RL_B = 0xFF;
+ _RIV = 0;
+ _RMR = 0;
+ _RIX = 0xffff;
+ _RIY = 0xFFFF;
+ _RSP = 0xFFFF;
+ _RPC = 0;
 }
 
 word BCasWord()
 {
-	return _RB_A << 8 | _RC_A;
+ return _RB_A << 8 | _RC_A;
 }
 
 word DEasWord()
 {
-	return _RD_A << 8 | _RE_A;
+ return _RD_A << 8 | _RE_A;
 }
 
 word HLasWord()
 {
-	return _RH_A << 8 | _RL_A;
+ return _RH_A << 8 | _RL_A;
 }
 
 void DecrementBC()
 {
-	word currentvalue = BCasWord();
-	currentvalue--;
-	_RB_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RC_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = BCasWord();
+ currentvalue--;
+ _RB_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RC_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void DecrementHL()
 {
-	word currentvalue = HLasWord();
-	currentvalue--;
-	_RH_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RL_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = HLasWord();
+ currentvalue--;
+ _RH_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RL_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void DecrementDE()
 {
-	word currentvalue = DEasWord();
-	currentvalue--;
-	_RD_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RE_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = DEasWord();
+ currentvalue--;
+ _RD_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RE_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void IncrementBC()
 {
-	word currentvalue = BCasWord();
-	currentvalue++;
-	_RB_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RC_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = BCasWord();
+ currentvalue++;
+ _RB_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RC_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void IncrementHL()
 {
-	word currentvalue = HLasWord();
-	currentvalue++;
-	_RH_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RL_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = HLasWord();
+ currentvalue++;
+ _RH_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RL_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void IncrementDE()
 {
-	word currentvalue = DEasWord();
-	currentvalue++;
-	_RD_A = (currentvalue >> (8 * 1)) & 0xff;
-	_RE_A = (currentvalue >> (8 * 0)) & 0xff;
+ word currentvalue = DEasWord();
+ currentvalue++;
+ _RD_A = (currentvalue >> (8 * 1)) & 0xff;
+ _RE_A = (currentvalue >> (8 * 0)) & 0xff;
 }
 
 void SetFlag(bool value, byte flag)
 {
-	_RF_A |= value << flag;
+ _RF_A |= value << flag;
 }
 int GetFlag(byte flag)
 {
-	return (_RF_A >> flag) & 1;	 
+ return (_RF_A >> flag) & 1;
 }

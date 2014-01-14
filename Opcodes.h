@@ -4,6 +4,7 @@
 #include "OP_ETS.h"
 #include "OP_Math.h"
 #include "OP_CR.h"
+#include "OP_RaS.h"
 
 #define OP_STOP 0x00
 
