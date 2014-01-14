@@ -5,7 +5,6 @@
 
 void PrepTest()
 {
-	int x = 0;
 	FILE * f = fopen("test.bin", "rb");
 	fread(_RAM, 10000, 1, f);
 }

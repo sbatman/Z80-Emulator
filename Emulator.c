@@ -8,51 +8,65 @@
 
 
 #include <stdio.h>
+#include <time.h>
 
-
-int main()
+void Init()
 {
  printf("INIT\n");
  ZeroRegisters();
  BuildPairtyLookupTable();
  ZeroRam();
  InitCounterStep();
+}
+
+void PrintStatus(byte currentOpcode,double ips)
+{
+ printf("IPS: %f\n", ips);
+ printf("Current Addresss : %x \n", _RPC);
+ printf("Current OpCode : %x \n", currentOpcode);
+ printf("_A%*i\n", 8, _RA_A);
+ printf("_B%*i\n", 8, _RB_A);
+ printf("_C%*i\n", 8, _RC_A);
+ printf("_D%*i\n", 8, _RD_A);
+ printf("_E%*i\n", 8, _RE_A);
+ printf("_H%*i\n", 8, _RH_A);
+ printf("_L%*i\n\n", 8, _RL_A);
+ printf("F_S%*i\n", 8, GetFlag(FLAG_S));
+ printf("F_Z%*i\n", 8, GetFlag(FLAG_Z));
+ printf("F_H%*i\n", 8, GetFlag(FLAG_H));
+ printf("F_P%*i\n", 8, GetFlag(FLAG_P));
+ printf("F_N%*i\n", 8, GetFlag(FLAG_N));
+ printf("F_C%*i\n", 8, GetFlag(FLAG_C));
+}
+
+void JumpToAddress(byte h, byte l)
+{
+ int position = h << 8 | l;
+ _RPC = _RAM[position];
+}
+
+int main()
+{
+ long long startTime = clock();
+ long long Instructions = 0;
+ Init();
  printf("START\n");
  PrepTest();
- int tick = 0;
+ 
  for (;;)
  {
-  system("cls");
-
   int next = _RAM[_RPC];
-  printf("Current Addresss : %x \n", _RPC);
-  printf("Next OpCode : %x \n", next);
-  printf("_A%*i\n", 8, _RA_A);
-  printf("_B%*i\n", 8, _RB_A);
-  printf("_C%*i\n", 8, _RC_A);
-  printf("_D%*i\n", 8, _RD_A);
-  printf("_E%*i\n", 8, _RE_A);
-  printf("_H%*i\n", 8, _RH_A);
-  printf("_L%*i\n\n", 8, _RL_A);
-  printf("F_S%*i\n", 8, GetFlag(FLAG_S));
-  printf("F_Z%*i\n", 8, GetFlag(FLAG_Z));
-  printf("F_H%*i\n", 8, GetFlag(FLAG_H));
-  printf("F_P%*i\n", 8, GetFlag(FLAG_P));
-  printf("F_N%*i\n", 8, GetFlag(FLAG_N));
-  printf("F_C%*i\n", 8, GetFlag(FLAG_C));
+  if (Instructions % 1== 0){
+  system("cls");
+  double ips = Instructions/((clock() - startTime) );
+  PrintStatus(next, ips);
+  }
 
   int opcost = CounterStep[next];
-  //if (next == OP_STOP) break;
-  if (tick % 10 == 0)
-  {
-   int g = 7;
-   g = g*g;
-  }
-  tick++;
-
+  Instructions++;
   switch (next)
   {
-   case OP_STOP:break;
+   case OP_NOP:break;
    case OP_LD_A_A: _RA_A = _RA_A; break;
    case OP_LD_B_A: _RA_A = _RB_A; break;
    case OP_LD_C_A: _RA_A = _RC_A; break;
@@ -260,7 +274,7 @@ int main()
 					  break;
 					 default:
 					 {
-							 printf("Unkown opcode IX:%i \n", _RAM[_RPC + 1]);
+						//	 printf("Unkown opcode IX:%i \n", _RAM[_RPC + 1]);
 					 }
 					}
    }
@@ -400,7 +414,7 @@ int main()
 					  break;
 					 default:
 					 {
-							 printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
+							// printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
 					 }
 					}
    }
@@ -528,7 +542,7 @@ int main()
 								   SetFlag(0, FLAG_H);
 								   SetFlag(0, FLAG_N);
 								   opcost = 2;
-								   if ((BCasWord() - 1 != 0))_RPC -= 2;
+								   if ((BCasWord() != 0))_RPC -= 2;
 				  }
 				   break;
 				  case OP_ETS_LDD:
@@ -636,7 +650,7 @@ int main()
 				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
 				  default:
 				  {
-						  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
+						//  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
 				  }
 				 }
    }
@@ -950,12 +964,61 @@ int main()
 				   opcost = 0;
    }
 	break;
-   case OP_JR_NZ_E:
+   case OP_RAS_JR_NZ_E:
    {
 				   if (GetFlag(FLAG_Z) == 0)
 				   {
 					_RPC += _RAM[_RPC + 1];
 				   }
+   }
+	break;
+   case OP_RST_00H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x00;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_08H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x08;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_10H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x10;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_18H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x18;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_20H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x20;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_28H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x28;
+				   opcost = 0;
+   }
+	break;
+   case OP_RST_30H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x30;
+				   opcost = 0;
    }
 	break;
    case OP_RST_38H:
@@ -975,6 +1038,16 @@ int main()
    case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
    case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
 
+   case OP_RAS_JP_NZ:{ if (GetFlag(FLAG_Z) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); } break;
+   case OP_RAS_JP_Z: {if (GetFlag(FLAG_Z) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); }break;
+   case OP_RAS_JP_NC:{ if (GetFlag(FLAG_C) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); } break;
+   case OP_RAS_JP_C: {if (GetFlag(FLAG_C) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); }break;
+   case OP_RAS_JP_PO: {if (GetFlag(FLAG_P) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); } break;
+   case OP_RAS_JP_PE: {if (GetFlag(FLAG_P) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); }break;
+   case OP_RAS_JP_P: {if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); }break;
+   case OP_RAS_JP_N: {if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); }break;
+
+
    case OP_RAS_RLCA:
    {
 					int hbit = (_RA_A % 0x80) != 0;
@@ -991,20 +1064,45 @@ int main()
 					  }
    }
 	break;
+   case OP_RAS_JR_E:
+   {
+					byte jump = _RAM[_RPC + 1];
+					signed char tc = jump;
+					_RPC += jump;
+   }
+	break;
+   case OP_RAS_JR_Z:
+   {
+					if (GetFlag(FLAG_Z) != 0){
+					byte jump = _RAM[_RPC + 1];
+					signed char tc = jump;
+					_RPC += jump;
+					}
+   }
+	break;
    case OP_RAS_CB:
    {
 				  switch (_RAM[_RPC + 1]){
 				   default:
 				   {
-						   printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
+						//   printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
 				   }
 				  }
    }
 	break;
+   case OP_RAS_RRC_A:
+   {
+					 SetFlag((_RA_A & 0x01) != 0,FLAG_C);
+					 _RA_A >>=1;
+					 _RA_A |= (byte) (GetFlag(FLAG_C)<<7);
+					 SetFlag(0, FLAG_H);
+					 SetFlag(0, FLAG_N);
+   }
+   break;
 
    default:
    {
-		   printf("Unkown opcode %i \n", _RAM[_RPC]);
+		  // printf("Unkown opcode %i \n", _RAM[_RPC]);
    }
   }
 
