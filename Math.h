@@ -1,5 +1,6 @@
 #pragma once
 #include "Registers.h"
+#include "Types.h"
 
 void Math_Add_SS_HL(word value, bool addCarry)
 {

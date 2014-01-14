@@ -643,9 +643,9 @@ int main()
 							  SetFlag(1, FLAG_N);
 				  }
 				   break;
-				  case OP_MATH_ADC_BC_HL: Math_Add_SS_HL(BCasWord, 1); break;
-				  case OP_MATH_ADC_DE_HL: Math_Add_SS_HL(DEasWord, 1); break;
-				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord, 1); break;
+				  case OP_MATH_ADC_BC_HL: Math_Add_SS_HL(BCasWord(), 1); break;
+				  case OP_MATH_ADC_DE_HL: Math_Add_SS_HL(DEasWord(), 1); break;
+				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord(), 1); break;
 				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
 				  default:
 				  {
@@ -904,9 +904,9 @@ int main()
    }
 	break;
 
-   case OP_MATH_ADD_BC_HL: Math_Add_SS_HL(BCasWord, 0); break;
-   case OP_MATH_ADD_DE_HL: Math_Add_SS_HL(DEasWord, 0); break;
-   case OP_MATH_ADD_HL_HL: Math_Add_SS_HL(HLasWord, 0); break;
+   case OP_MATH_ADD_BC_HL: Math_Add_SS_HL(BCasWord(), 0); break;
+   case OP_MATH_ADD_DE_HL: Math_Add_SS_HL(DEasWord(), 0); break;
+   case OP_MATH_ADD_HL_HL: Math_Add_SS_HL(HLasWord(), 0); break;
    case OP_MATH_ADD_SP_HL: Math_Add_SS_HL(_RSP, 0); break;
 
    case OP_MATH_INC_BC:
