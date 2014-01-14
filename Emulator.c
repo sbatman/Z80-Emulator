@@ -19,30 +19,30 @@ int main()
  InitCounterStep();
  printf("START\n");
  PrepTest();
- int tick=0;
+ int tick = 0;
  for (;;)
  {
   system("cls");
-    int next = _RAM[_RPC];
-	printf("Current Addresss : %x \n",_RPC);
-	if (next!=0)printf("Next OpCode : %x \n", next);
-	printf("_A%*i\n", 8, _RA_A);
-	printf("_B%*i\n", 8, _RB_A);
-	printf("_C%*i\n", 8, _RC_A);
-	printf("_D%*i\n", 8, _RD_A);
-	printf("_E%*i\n", 8, _RE_A);
-	printf("_H%*i\n", 8, _RH_A);
-	printf("_L%*i\n", 8, _RL_A);
-	
+  int next = _RAM[_RPC];
+  printf("Current Addresss : %x \n", _RPC);
+  if (next != 0)printf("Next OpCode : %x \n", next);
+  printf("_A%*i\n", 8, _RA_A);
+  printf("_B%*i\n", 8, _RB_A);
+  printf("_C%*i\n", 8, _RC_A);
+  printf("_D%*i\n", 8, _RD_A);
+  printf("_E%*i\n", 8, _RE_A);
+  printf("_H%*i\n", 8, _RH_A);
+  printf("_L%*i\n", 8, _RL_A);
+
   int opcost = CounterStep[next];
   //if (next == OP_STOP) break;
-  if (tick%10==0)
+  if (tick % 10 == 0)
   {
-  int g=7;
-  g=g*g;
+   int g = 7;
+   g = g*g;
   }
   tick++;
-  
+
   switch (next)
   {
    case OP_STOP:break;
@@ -812,7 +812,7 @@ int main()
    case OP_MATH_SBC_A_L:Math_Sub_A_R(_RL_A, 1); break;
    case OP_MATH_SBC_N_A:Math_Sub_A_R(_RAM[_RPC + 1], 1); break;
    case OP_MATH_SBC_HL_A:Math_Sub_A_R(_RAM[HLasWord()], 1); break;
-   
+
    case OP_MATH_AND_A_A:Math_And_A_R(_RA_A); break;
    case OP_MATH_AND_A_B:Math_And_A_R(_RB_A); break;
    case OP_MATH_AND_A_C:Math_And_A_R(_RC_A); break;
@@ -957,62 +957,63 @@ int main()
    case OP_CR_CALL:
    {
 				   word newRPC = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
-				   _RPC+=3;
+				   _RPC += 3;
 				   Stack_Push_Word(_RPC);
 				   _RPC = newRPC;
-				   opcost=0;
+				   opcost = 0;
    }
 	break;
    case OP_JR_NZ_E:
    {
-				   if (GetFlag(FLAG_Z)==0)
+				   if (GetFlag(FLAG_Z) == 0)
 				   {
-					_RPC += _RAM[_RPC+1];
+					_RPC += _RAM[_RPC + 1];
 				   }
    }
 	break;
-	case OP_RST_38H:
-	{
-	 Stack_Push_Word(_RPC);
-	 _RPC=0x38;
-	}
-   break;
-	case OP_RET: _RPC = Stack_Pop_Word(); break;
-	case OP_RET_NZ: if (GetFlag(FLAG_Z) == 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_Z: if (GetFlag(FLAG_Z) != 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_NC: if (GetFlag(FLAG_C) == 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_C: if (GetFlag(FLAG_C) != 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_PO: if (GetFlag(FLAG_P) == 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_PE: if (GetFlag(FLAG_P) != 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
-	case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RST_38H:
+   {
+				   Stack_Push_Word(_RPC);
+				   _RPC = 0x38;
+				   opcost=0;
+   }
+	break;
+   case OP_RET: _RPC = Stack_Pop_Word(); break;
+   case OP_RET_NZ: if (GetFlag(FLAG_Z) == 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_Z: if (GetFlag(FLAG_Z) != 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_NC: if (GetFlag(FLAG_C) == 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_C: if (GetFlag(FLAG_C) != 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_PO: if (GetFlag(FLAG_P) == 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_PE: if (GetFlag(FLAG_P) != 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
 
-	case OP_RAS_RLCA:
-	{
-		 int hbit = (_RA_A % 0x80)!=0;
-		 _RA_A=_RA_A << 1;
-		 if (hbit)_RA_A |=0x01;
-	}
+   case OP_RAS_RLCA:
+   {
+					int hbit = (_RA_A % 0x80) != 0;
+					_RA_A = _RA_A << 1;
+					if (hbit)_RA_A |= 0x01;
+   }
 	break;
-	case OP_RAS_JR_C_E:
-	{
-					   if (GetFlag(FLAG_C) != 0){
-						byte jump = _RAM[_RPC+1];
-						signed char tc = jump;
-						_RPC += jump;
-					   }
-	}
+   case OP_RAS_JR_C_E:
+   {
+					  if (GetFlag(FLAG_C) != 0){
+					   byte jump = _RAM[_RPC + 1];
+					   signed char tc = jump;
+					   _RPC += jump;
+					  }
+   }
 	break;
-	case OP_RAS_CB:
-	{
+   case OP_RAS_CB:
+   {
 				  switch (_RAM[_RPC + 1]){
 				   default:
 				   {
 						   printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
 				   }
 				  }
-				  }
-				  break;
+   }
+	break;
 
    default:
    {
