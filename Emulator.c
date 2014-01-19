@@ -4,6 +4,7 @@
 #include "CounterStep.h"
 #include "Test.h"
 #include "Math.h"
+#include "RAS.h"
 #include "Stack.h"
 
 
@@ -684,30 +685,10 @@ int main()
    }
 	break;
    case OP_LD_HL_SP: _RSP = _RH_A << 8 | _RL_A; break;
-   case OP_SK_PUSH_BC:
-   {
-					  _RAM[--_RSP] = _RB_A;
-					  _RAM[--_RSP] = _RC_A;
-   }
-	break;
-   case OP_SK_PUSH_DE:
-   {
-					  _RAM[--_RSP] = _RD_A;
-					  _RAM[--_RSP] = _RE_A;
-   }
-	break;
-   case OP_SK_PUSH_HL:
-   {
-					  _RAM[--_RSP] = _RH_A;
-					  _RAM[--_RSP] = _RL_A;
-   }
-	break;
-   case OP_SK_PUSH_AF:
-   {
-					  _RAM[--_RSP] = _RA_A;
-					  _RAM[--_RSP] = _RF_A;
-   }
-	break;
+   case OP_SK_PUSH_BC:  Stack_Push_Word(BCasWord);	break;
+   case OP_SK_PUSH_DE:  Stack_Push_Word(DEasWord); break;
+   case OP_SK_PUSH_HL:  Stack_Push_Word(HLasWord); break;
+   case OP_SK_PUSH_AF:  Stack_Push_Word(AFasWord); break;
    case OP_SK_POP_BC:
    {
 					 _RC_A = _RAM[_RSP++];
@@ -973,12 +954,12 @@ int main()
 				   opcost = 0;
    }
 	break;
-   case OP_RAS_JR_NZ_E:
+   case OP_SK_JR_NZ_E:
    {
-					   if (GetFlag(FLAG_Z) == 0)
-					   {
-						_RPC += _RAM[_RPC + 1];
-					   }
+					  if (GetFlag(FLAG_Z) == 0)
+					  {
+					   _RPC += _RAM[_RPC + 1];
+					  }
    }
 	break;
    case OP_RST_00H:
@@ -1047,77 +1028,77 @@ int main()
    case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
    case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
 
-   case OP_RAS_JP: JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); break;
-   case OP_RAS_JP_NZ:
+   case OP_SK_JP: JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); break;
+   case OP_SK_JP_NZ:
    {
-					 if (GetFlag(FLAG_Z) == 0)
-					 {
-					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
-					  opcost = 0;
-					 }
-   }
-	break;
-   case OP_RAS_JP_Z:
-   {
-					if (GetFlag(FLAG_Z) != 0)
+					if (GetFlag(FLAG_Z) == 0)
 					{
 					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
 					 opcost = 0;
 					}
    }
 	break;
-   case OP_RAS_JP_NC:
+   case OP_SK_JP_Z:
    {
-					 if (GetFlag(FLAG_C) == 0)
-					 {
-					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
-					  opcost = 0;
-					 }
+				   if (GetFlag(FLAG_Z) != 0)
+				   {
+					JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					opcost = 0;
+				   }
    }
 	break;
-   case OP_RAS_JP_C:
+   case OP_SK_JP_NC:
    {
-					if (GetFlag(FLAG_C) != 0)
+					if (GetFlag(FLAG_C) == 0)
 					{
 					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
 					 opcost = 0;
 					}
    }
 	break;
-   case OP_RAS_JP_PO:
+   case OP_SK_JP_C:
    {
-					 if (GetFlag(FLAG_P) == 0)
-					 {
-					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
-					  opcost = 0;
-					 }
+				   if (GetFlag(FLAG_C) != 0)
+				   {
+					JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					opcost = 0;
+				   }
    }
 	break;
-   case OP_RAS_JP_PE:
+   case OP_SK_JP_PO:
    {
-					 if (GetFlag(FLAG_P) != 0)
-					 {
-					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
-					  opcost = 0;
-					 }
-   }
-	break;
-   case OP_RAS_JP_P:
-   {
-					if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)
+					if (GetFlag(FLAG_P) == 0)
 					{
 					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
 					 opcost = 0;
 					}
    }
 	break;
-   case OP_RAS_JP_N:
+   case OP_SK_JP_PE:
    {
-					if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)
+					if (GetFlag(FLAG_P) != 0)
 					{
 					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
 					 opcost = 0;
 					}
+   }
+	break;
+   case OP_SK_JP_P:
+   {
+				   if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)
+				   {
+					JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					opcost = 0;
+				   }
+   }
+	break;
+   case OP_SK_JP_N:
+   {
+				   if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)
+				   {
+					JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					opcost = 0;
+				   }
    }
 	break;
    case OP_RAS_RLCA:
@@ -1127,34 +1108,52 @@ int main()
 					if (hbit)_RA_A |= 0x01;
    }
 	break;
-   case OP_RAS_JR_C_E:
+   case OP_SK_JR_C_E:
    {
-					  if (GetFlag(FLAG_C) != 0){
-					   byte jump = _RAM[_RPC + 1];
-					   signed char tc = jump;
-					   _RPC += jump;
-					  }
+					 if (GetFlag(FLAG_C) != 0){
+					  byte jump = _RAM[_RPC + 1];
+					  signed char tc = jump;
+					  _RPC += jump;
+					  opcost=0;
+					 }
+   }
+   case OP_SK_JR_NC_E:
+   {
+					 if (GetFlag(FLAG_C) == 0){
+					  byte jump = _RAM[_RPC + 1];
+					  signed char tc = jump;
+					  _RPC += jump;
+					  opcost=0;
+					 }
    }
 	break;
-   case OP_RAS_JR_E:
+   case OP_SK_JR_E:
    {
+				   byte jump = _RAM[_RPC + 1];
+				   signed char tc = jump;
+				   _RPC += jump;
+   }
+	break;
+   case OP_SK_JR_Z:
+   {
+				   if (GetFlag(FLAG_Z) != 0){
 					byte jump = _RAM[_RPC + 1];
 					signed char tc = jump;
 					_RPC += jump;
-   }
-	break;
-   case OP_RAS_JR_Z:
-   {
-					if (GetFlag(FLAG_Z) != 0){
-					 byte jump = _RAM[_RPC + 1];
-					 signed char tc = jump;
-					 _RPC += jump;
-					}
+				   }
    }
 	break;
    case OP_RAS_CB:
    {
+				  opcost = 2;
 				  switch (_RAM[_RPC + 1]){
+				   case OP_RAS_RL_A: _RA_A = RAS_RL(_RA_A);  break;
+				   case OP_RAS_RL_B: _RB_A = RAS_RL(_RB_A);  break;
+				   case OP_RAS_RL_C: _RC_A = RAS_RL(_RC_A);  break;
+				   case OP_RAS_RL_D: _RD_A = RAS_RL(_RD_A);  break;
+				   case OP_RAS_RL_E: _RE_A = RAS_RL(_RE_A);  break;
+				   case OP_RAS_RL_H: _RH_A = RAS_RL(_RH_A);  break;
+				   case OP_RAS_RL_L: _RL_A = RAS_RL(_RL_A);  break;
 				   default:
 				   {
 						   printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
@@ -1171,6 +1170,8 @@ int main()
 					 SetFlag(0, FLAG_N);
    }
 	break;
+
+   case OP_RAS_RLA:RAS_RLA(); break;
    case OP_IO_OUT_NA:
    {
 					 //TODO THIS

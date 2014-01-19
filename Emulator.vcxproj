@@ -94,6 +94,7 @@
     <ClInclude Include="OP_RaS.h" />
     <ClInclude Include="OP_Stack.h" />
     <ClInclude Include="Ram.h" />
+    <ClInclude Include="RAS.h" />
     <ClInclude Include="Registers.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Test.h" />

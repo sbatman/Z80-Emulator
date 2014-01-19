@@ -90,6 +90,11 @@ word BCasWord()
  return _RB_A << 8 | _RC_A;
 }
 
+word AFasWord()
+{
+ return _RA_A << 8 | _RF_A;
+}
+
 word DEasWord()
 {
  return _RD_A << 8 | _RE_A;
