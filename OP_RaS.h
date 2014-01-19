@@ -11,6 +11,7 @@
 
 #define OP_RAS_RRC_A 0x0F
 
+#define OP_RAS_JP 0xC3
 #define OP_RAS_JP_NZ 0xC2
 #define OP_RAS_JP_Z 0xCA
 #define OP_RAS_JP_NC 0xD2
@@ -19,4 +20,3 @@
 #define OP_RAS_JP_PE 0xEA
 #define OP_RAS_JP_P 0xF2
 #define OP_RAS_JP_N 0xFA
-

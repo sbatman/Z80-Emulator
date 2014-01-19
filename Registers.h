@@ -34,6 +34,8 @@ word _RPC; //Program Counter
 bool _IFF1;
 bool _IFF2;
 
+byte _InterruptMode;
+
 byte _ParityLookupTable[255];
 
 #define FLAG_S 0x80
@@ -58,6 +60,7 @@ void BuildPairtyLookupTable()
 
 void ZeroRegisters()
 {
+ _InterruptMode=0;
  _RA_A = 0xFF;
  _RC_A = 0xFF;
  _RD_A = 0xFF;

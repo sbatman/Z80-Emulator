@@ -28,10 +28,7 @@ void InitCounterStep()
  CounterStep[OP_LD_NN_HL] = 3;
  CounterStep[OP_LD_NN_SP] = 3;
  CounterStep[OP_LD_NN_HL_M] = 3;
- CounterStep[OP_LD_NN_DD_BC] = 4;
- CounterStep[OP_LD_NN_DD_DE] = 4;
- CounterStep[OP_LD_NN_DD_HL] = 4;
- CounterStep[OP_LD_NN_DD_SP] = 4;
+ CounterStep[OP_LD_A_NN]=3;
  CounterStep[OP_LD_HL_NN] = 3;
  CounterStep[OP_MATH_ADD_N_A] = 2;
  CounterStep[OP_MATH_ADC_N_A] = 2;
@@ -54,5 +51,9 @@ void InitCounterStep()
  CounterStep[OP_RAS_JP_PE] = 3;
  CounterStep[OP_RAS_JP_P] = 3;
  CounterStep[OP_RAS_JP_N] = 3;
- CounterStep[OP_LD_N_HL]=2;
+ CounterStep[OP_LD_N_HL] = 2;
+ CounterStep[OP_IO_OUT_NA] = 2;
+
+ CounterStep[OP_RAS_JP] = 0;
+ 
 }

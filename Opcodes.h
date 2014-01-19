@@ -5,6 +5,7 @@
 #include "OP_Math.h"
 #include "OP_CR.h"
 #include "OP_RaS.h"
+#include "OP_IO.h"
 
 #define OP_NOP 0x00
 
@@ -15,3 +16,5 @@
 
 #define OP_DI 0xF3
 #define OP_EI 0xFB
+
+#define OP_ED_IM_1 0x56

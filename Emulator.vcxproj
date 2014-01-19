@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CounterStep.h" />
+    <ClInclude Include="OP_IO.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Opcodes.h" />
     <ClInclude Include="OP_CR.h" />

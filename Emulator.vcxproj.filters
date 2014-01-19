@@ -67,5 +67,8 @@
     <ClInclude Include="OP_RaS.h">
       <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
+    <ClInclude Include="OP_IO.h">
+      <Filter>Header Files\Opcodes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
