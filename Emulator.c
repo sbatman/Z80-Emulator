@@ -19,11 +19,12 @@ void Init()
  InitCounterStep();
 }
 
-void PrintStatus(byte currentOpcode,double ips)
+void PrintStatus(byte currentOpcode, double ips)
 {
  printf("IPS: %f\n", ips);
  printf("Current Addresss : %x \n", _RPC);
  printf("Current OpCode : %x \n", currentOpcode);
+ printf("Current Stack Pointer : %x \n", _RSP);
  printf("_A%*x\n", 8, _RA_A);
  printf("_B%*x\n", 8, _RB_A);
  printf("_C%*x\n", 8, _RC_A);
@@ -58,16 +59,15 @@ int main()
  Init();
  printf("START\n");
  PrepTest();
- 
+
  for (;;)
  {
   int next = _RAM[_RPC];
   //if (Instructions % 100000== 0){
   system("cls");
-  double ips = Instructions/((clock() - startTime) );
+  double ips = Instructions / ((clock() - startTime));
   PrintStatus(next, ips);
   //}
-  if (Instructions>500)break;
   int opcost = CounterStep[next];
   Instructions++;
   switch (next)
@@ -420,7 +420,7 @@ int main()
 					  break;
 					 default:
 					 {
-							printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
+							 printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
 					 }
 					}
    }
@@ -542,15 +542,15 @@ int main()
 				  {
 								   while (BCasWord() != 0)
 								   {
-								   _RAM[DEasWord()] = _RAM[HLasWord()];
-								   IncrementHL();
-								   IncrementDE();
-								   DecrementBC();
+									_RAM[DEasWord()] = _RAM[HLasWord()];
+									IncrementHL();
+									IncrementDE();
+									DecrementBC();
 								   }
 								   SetFlag((BCasWord() != 0), FLAG_P);
 								   SetFlag(0, FLAG_H);
 								   SetFlag(0, FLAG_N);
-								   opcost = 2;								   
+								   opcost = 2;
 				  }
 				   break;
 				  case OP_ETS_LDD:
@@ -599,9 +599,9 @@ int main()
 				   break;
 				  case OP_ETS_CPIR:
 				  {
-								   bool condition = _RAM[HLasWord()] == _RA_A;								 
-									SetFlag(condition, FLAG_Z);
-								  								   DecrementBC();
+								   bool condition = _RAM[HLasWord()] == _RA_A;
+								   SetFlag(condition, FLAG_Z);
+								   DecrementBC();
 								   IncrementHL();
 								   SetFlag((BCasWord() - 1 != 0), FLAG_P);
 								   SetFlag(0, FLAG_H);
@@ -616,8 +616,8 @@ int main()
 				   break;
 				  case OP_ETS_CPD:
 				  {
-								  
-								   SetFlag(_RAM[HLasWord()] == _RA_A, FLAG_Z);
+
+								  SetFlag(_RAM[HLasWord()] == _RA_A, FLAG_Z);
 								  DecrementBC();
 								  DecrementHL();
 								  SetFlag((BCasWord() - 1 != 0), FLAG_P);
@@ -656,7 +656,7 @@ int main()
 				  case OP_MATH_ADC_DE_HL: Math_Add_SS_HL(DEasWord(), 1); break;
 				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord(), 1); break;
 				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
-				  case OP_ED_IM_1: _InterruptMode=1; break;
+				  case OP_ED_IM_1: _InterruptMode = 1; break;
 				  default:
 				  {
 						  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
@@ -952,15 +952,15 @@ int main()
    case OP_MATH_DEC_DE:
    {
 					   word newValue = DEasWord() - 1;
-					   _RB_A = (newValue >> (8 * 1)) & 0xff;
-					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+					   _RD_A = (newValue >> (8 * 1)) & 0xff;
+					   _RE_A = (newValue >> (8 * 0)) & 0xff;
    }
 	break;
    case OP_MATH_DEC_HL:
    {
 					   word newValue = HLasWord() - 1;
-					   _RB_A = (newValue >> (8 * 1)) & 0xff;
-					   _RC_A = (newValue >> (8 * 0)) & 0xff;
+					   _RH_A = (newValue >> (8 * 1)) & 0xff;
+					   _RL_A = (newValue >> (8 * 0)) & 0xff;
    }
 	break;
    case OP_MATH_DEC_SP:_RSP--; break;
@@ -975,10 +975,10 @@ int main()
 	break;
    case OP_RAS_JR_NZ_E:
    {
-				   if (GetFlag(FLAG_Z) == 0)
-				   {
-					_RPC += _RAM[_RPC + 1];
-				   }
+					   if (GetFlag(FLAG_Z) == 0)
+					   {
+						_RPC += _RAM[_RPC + 1];
+					   }
    }
 	break;
    case OP_RST_00H:
@@ -1048,16 +1048,78 @@ int main()
    case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
 
    case OP_RAS_JP: JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); break;
-   case OP_RAS_JP_NZ:{ if (GetFlag(FLAG_Z) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);  opcost=0;} break;
-   case OP_RAS_JP_Z: {if (GetFlag(FLAG_Z) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; }break;
-   case OP_RAS_JP_NC:{ if (GetFlag(FLAG_C) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; } break;
-   case OP_RAS_JP_C: {if (GetFlag(FLAG_C) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; }break;
-   case OP_RAS_JP_PO: {if (GetFlag(FLAG_P) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; } break;
-   case OP_RAS_JP_PE: {if (GetFlag(FLAG_P) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; }break;
-   case OP_RAS_JP_P: {if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; }break;
-   case OP_RAS_JP_N: {if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); opcost = 0; }break;
-
-
+   case OP_RAS_JP_NZ:
+   {
+					 if (GetFlag(FLAG_Z) == 0)
+					 {
+					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					  opcost = 0;
+					 }
+   }
+	break;
+   case OP_RAS_JP_Z:
+   {
+					if (GetFlag(FLAG_Z) != 0)
+					{
+					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					 opcost = 0;
+					}
+   }
+	break;
+   case OP_RAS_JP_NC:
+   {
+					 if (GetFlag(FLAG_C) == 0)
+					 {
+					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					  opcost = 0;
+					 }
+   }
+	break;
+   case OP_RAS_JP_C:
+   {
+					if (GetFlag(FLAG_C) != 0)
+					{
+					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					 opcost = 0;
+					}
+   }
+	break;
+   case OP_RAS_JP_PO:
+   {
+					 if (GetFlag(FLAG_P) == 0)
+					 {
+					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					  opcost = 0;
+					 }
+   }
+	break;
+   case OP_RAS_JP_PE:
+   {
+					 if (GetFlag(FLAG_P) != 0)
+					 {
+					  JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					  opcost = 0;
+					 }
+   }
+	break;
+   case OP_RAS_JP_P:
+   {
+					if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)
+					{
+					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					 opcost = 0;
+					}
+   }
+	break;
+   case OP_RAS_JP_N:
+   {
+					if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)
+					{
+					 JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
+					 opcost = 0;
+					}
+   }
+	break;
    case OP_RAS_RLCA:
    {
 					int hbit = (_RA_A % 0x80) != 0;
@@ -1084,9 +1146,9 @@ int main()
    case OP_RAS_JR_Z:
    {
 					if (GetFlag(FLAG_Z) != 0){
-					byte jump = _RAM[_RPC + 1];
-					signed char tc = jump;
-					_RPC += jump;
+					 byte jump = _RAM[_RPC + 1];
+					 signed char tc = jump;
+					 _RPC += jump;
 					}
    }
 	break;
@@ -1095,25 +1157,25 @@ int main()
 				  switch (_RAM[_RPC + 1]){
 				   default:
 				   {
-						  printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
+						   printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
 				   }
 				  }
    }
 	break;
    case OP_RAS_RRC_A:
    {
-					 SetFlag((_RA_A & 0x01) != 0,FLAG_C);
-					 _RA_A >>=1;
-					 _RA_A |= (byte) (GetFlag(FLAG_C)<<7);
+					 SetFlag((_RA_A & 0x01) != 0, FLAG_C);
+					 _RA_A >>= 1;
+					 _RA_A |= (byte) (GetFlag(FLAG_C) << 7);
 					 SetFlag(0, FLAG_H);
 					 SetFlag(0, FLAG_N);
    }
-   break;
+	break;
    case OP_IO_OUT_NA:
    {
-   //TODO THIS
+					 //TODO THIS
    }
-   break;
+	break;
    default:
    {
 		   printf("Unkown opcode %i \n", _RAM[_RPC]);

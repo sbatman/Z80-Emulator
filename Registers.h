@@ -60,7 +60,7 @@ void BuildPairtyLookupTable()
 
 void ZeroRegisters()
 {
- _InterruptMode=0;
+ _InterruptMode = 0;
  _RA_A = 0xFF;
  _RC_A = 0xFF;
  _RD_A = 0xFF;
@@ -150,10 +150,12 @@ void IncrementDE()
 
 void SetFlag(bool value, byte flag)
 {
- if (value){
- _RF_A |=  flag;
+ if (value)
+ {
+  _RF_A |= flag;
  }
- else{
+ else
+ {
   _RF_A &= ~flag;
  }
 }

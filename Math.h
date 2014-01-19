@@ -4,7 +4,7 @@
 
 void Math_Add_SS_HL(word value, bool addCarry)
 {
- word total = HLasWord();
+ int total = HLasWord();
  if (GetFlag(FLAG_C) && addCarry)value++;
  SetFlag(((total & 0x0fff) + (value & 0x0fff)) & 0x1000, FLAG_H);
  total += value;
@@ -19,6 +19,7 @@ void Math_Add_SS_HL(word value, bool addCarry)
  }
  _RH_A = (total >> (8 * 1)) & 0xff;
  _RL_A = (total >> (8 * 0)) & 0xff;
+ SetFlag(0, FLAG_N);
 }
 
 void Math_Sub_SS_HL(word value, bool addCarry)
@@ -34,6 +35,7 @@ void Math_Sub_SS_HL(word value, bool addCarry)
  SetFlag(partASign != partBSign && resultSign != partASign, FLAG_P);
  SetFlag((total & 0x8000) != 0, FLAG_S);
  SetFlag(total == 0, FLAG_Z);
+ SetFlag(1, FLAG_N);
  _RH_A = (total >> (8 * 1)) & 0xff;
  _RL_A = (total >> (8 * 0)) & 0xff;
 }
@@ -51,7 +53,7 @@ void Math_Add_A_R(byte value, bool addCarry)
  int partASign = _RA_A & 0x80;
  int partBSign = value & 0x80;
  int resultSign = result & 0x80;
- SetFlag(partASign != partBSign && resultSign != partASign, FLAG_P);
+ SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
  _RA_A = result;
 
 }
@@ -67,7 +69,7 @@ void Math_Sub_A_R(byte value, bool addCarry)
  int partASign = _RA_A & 0x80;
  int partBSign = value & 0x80;
  int resultSign = result & 0x80;
- SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
+ SetFlag(partASign != partBSign && resultSign != partASign, FLAG_P);
  _RA_A = result;
 }
 
@@ -106,8 +108,8 @@ void Math_Xor_A_R(byte value)
 
 void Math_Cp_A_R(byte value)
 {
- byte result = value - _RA_A;
- SetFlag((((value & 0x0F) - (_RA_A & 0x0F)) & 0x10) != 0, FLAG_H);
+ word result = _RA_A - value;
+ SetFlag((((_RA_A & 0x0F) - (value & 0x0F)) & 0x10) != 0, FLAG_H);
  SetFlag(1, FLAG_N);
  SetFlag(((result & 0x80) != 0), FLAG_S);
  SetFlag(((result & 0x100) != 0), FLAG_C);
@@ -115,7 +117,7 @@ void Math_Cp_A_R(byte value)
  int partASign = _RA_A & 0x80;
  int partBSign = value & 0x80;
  int resultSign = result & 0x80;
- SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
+ SetFlag(partASign != partBSign && resultSign != partASign, FLAG_P);
 }
 
 byte Math_Inc_Byte(byte value)
