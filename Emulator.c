@@ -658,6 +658,8 @@ int main()
 				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord(), 1); break;
 				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
 				  case OP_ED_IM_1: _InterruptMode = 1; break;
+				  case OP_MATH_SBC_HL_DE: Math_Sub_SS_HL(DEasWord() + (GetFlag(FLAG_C)!=0),0); break;
+				   case OP_IO_IN_C_A:break;
 				  default:
 				  {
 						  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
@@ -685,10 +687,10 @@ int main()
    }
 	break;
    case OP_LD_HL_SP: _RSP = _RH_A << 8 | _RL_A; break;
-   case OP_SK_PUSH_BC:  Stack_Push_Word(BCasWord);	break;
-   case OP_SK_PUSH_DE:  Stack_Push_Word(DEasWord); break;
-   case OP_SK_PUSH_HL:  Stack_Push_Word(HLasWord); break;
-   case OP_SK_PUSH_AF:  Stack_Push_Word(AFasWord); break;
+   case OP_SK_PUSH_BC:  Stack_Push_Word(BCasWord());	break;
+   case OP_SK_PUSH_DE:  Stack_Push_Word(DEasWord()); break;
+   case OP_SK_PUSH_HL:  Stack_Push_Word(HLasWord()); break;
+   case OP_SK_PUSH_AF:  Stack_Push_Word(AFasWord()); break;
    case OP_SK_POP_BC:
    {
 					 _RC_A = _RAM[_RSP++];
@@ -759,8 +761,12 @@ int main()
 	break;
    case OP_ETS_E_HL_SP:
    {
+					   byte low = _RAM[_RSP];
+					   byte high = _RAM[_RSP + 1];
 					   _RAM[_RSP] = _RL_A;
 					   _RAM[_RSP + 1] = _RH_A;
+					   _RL_A = low;
+					   _RH_A = high;
    }
 	break;
 
@@ -948,7 +954,7 @@ int main()
    case OP_CR_CALL:
    {
 				   word newRPC = _RAM[_RPC + 2] << 8 | _RAM[_RPC + 1];
-				   _RPC += 2;
+				   _RPC += 3;
 				   Stack_Push_Word(_RPC);
 				   _RPC = newRPC;
 				   opcost = 0;
@@ -1018,15 +1024,15 @@ int main()
 				   opcost = 0;
    }
 	break;
-   case OP_RET: _RPC = Stack_Pop_Word(); break;
-   case OP_RET_NZ: if (GetFlag(FLAG_Z) == 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_Z: if (GetFlag(FLAG_Z) != 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_NC: if (GetFlag(FLAG_C) == 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_C: if (GetFlag(FLAG_C) != 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_PO: if (GetFlag(FLAG_P) == 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_PE: if (GetFlag(FLAG_P) != 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)_RPC = Stack_Pop_Word(); break;
-   case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)_RPC = Stack_Pop_Word(); break;
+   case OP_RET: _RPC = Stack_Pop_Word();  opcost = 0; break;
+   case OP_RET_NZ: if (GetFlag(FLAG_Z) == 0){ _RPC = Stack_Pop_Word(); opcost = 0; }break;
+   case OP_RET_Z: if (GetFlag(FLAG_Z) != 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
+   case OP_RET_NC: if (GetFlag(FLAG_C) == 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
+   case OP_RET_C: if (GetFlag(FLAG_C) != 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
+   case OP_RET_PO: if (GetFlag(FLAG_P) == 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
+   case OP_RET_PE: if (GetFlag(FLAG_P) != 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
+   case OP_RET_P: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0){ _RPC = Stack_Pop_Word(); opcost = 0; }break;
+   case OP_RET_N: if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0){ _RPC = Stack_Pop_Word(); opcost = 0; } break;
 
    case OP_SK_JP: JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]); break;
    case OP_SK_JP_NZ:
@@ -1114,17 +1120,17 @@ int main()
 					  byte jump = _RAM[_RPC + 1];
 					  signed char tc = jump;
 					  _RPC += jump;
-					  opcost=0;
+					  opcost = 0;
 					 }
    }
    case OP_SK_JR_NC_E:
    {
-					 if (GetFlag(FLAG_C) == 0){
-					  byte jump = _RAM[_RPC + 1];
-					  signed char tc = jump;
-					  _RPC += jump;
-					  opcost=0;
-					 }
+					  if (GetFlag(FLAG_C) == 0){
+					   byte jump = _RAM[_RPC + 1];
+					   signed char tc = jump;
+					   _RPC += jump;
+					   opcost = 0;
+					  }
    }
 	break;
    case OP_SK_JR_E:
@@ -1137,6 +1143,16 @@ int main()
    case OP_SK_JR_Z:
    {
 				   if (GetFlag(FLAG_Z) != 0){
+					byte jump = _RAM[_RPC + 1];
+					signed char tc = jump;
+					_RPC += jump;
+				   }
+   }
+	break;
+   case OP_SK_DJNZ:
+   {
+				   _RB_A--;
+				   if (_RB_A != 0){
 					byte jump = _RAM[_RPC + 1];
 					signed char tc = jump;
 					_RPC += jump;
@@ -1168,6 +1184,17 @@ int main()
 					 _RA_A |= (byte) (GetFlag(FLAG_C) << 7);
 					 SetFlag(0, FLAG_H);
 					 SetFlag(0, FLAG_N);
+   }
+	break;
+
+   case OP_RAS_RRA:
+   {
+				   int currentCFlag = GetFlag(FLAG_C);
+				   SetFlag((_RA_A & 0x01), FLAG_C);
+				   _RA_A >>= 1;
+				   _RA_A |= (currentCFlag << 7);
+				   SetFlag(0, FLAG_H);
+				   SetFlag(0, FLAG_N);
    }
 	break;
 

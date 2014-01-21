@@ -53,7 +53,7 @@ void InitCounterStep()
  CounterStep[OP_SK_JP_N] = 3;
  CounterStep[OP_LD_N_HL] = 2;
  CounterStep[OP_IO_OUT_NA] = 2;
- CounterStep[OP_SK_JR_NC_E] = 0;
+ CounterStep[OP_SK_JR_NC_E] = 2;
  CounterStep[OP_SK_JP] = 0;
- 
+ CounterStep[OP_SK_DJNZ]=2;
 }

@@ -22,3 +22,5 @@
 #define OP_SK_JP_PE 0xEA
 #define OP_SK_JP_P 0xF2
 #define OP_SK_JP_N 0xFA
+
+#define OP_SK_DJNZ 0x10

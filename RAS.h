@@ -14,7 +14,7 @@ byte RAS_RL(byte value)
  return value;
 }
 
-byte RAS_RLA()
+void RAS_RLA()
 {
  bool carrySet = GetFlag(FLAG_C);
  SetFlag((_RA_A & 0x80) != 0, FLAG_C);
