@@ -55,7 +55,7 @@ void JumpToAddressAtAddress(byte h, byte l)
 
 int main()
 {
- long long startTime = clock();
+ long long startTime = clock() - 1;
  long long Instructions = 0;
  Init();
  printf("START\n");
@@ -64,11 +64,11 @@ int main()
  for (;;)
  {
   int next = _RAM[_RPC];
-  //if (Instructions % 100000== 0){
-  system("cls");
-  double ips = Instructions / ((clock() - startTime));
-  PrintStatus(next, ips);
-  //}
+  if (Instructions % 10000000 == 0){
+   system("cls");
+   float ips = Instructions / (float) ((clock() - startTime));
+   PrintStatus(next, ips);
+  }
   int opcost = CounterStep[next];
   Instructions++;
   switch (next)
@@ -489,40 +489,31 @@ int main()
 				   break;
 				  case OP_LD_NN_DD_SP:
 				  {
-									  int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-									  _RSP = _RAM[position + 1] << 8 | _RAM[position];
+									  _RSP = ReadWordAtAddress(_RPC + 2);
 									  opcost = 4;
 				  }
 				   break;
 				  case OP_LD_DD_NN_BC:
 				  {
-									  int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-									  _RAM[position] = _RC_A;
-									  _RAM[position + 1] = _RB_A;
+									  WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), BCasWord());
 									  opcost = 4;
 				  }
 				   break;
 				  case OP_LD_DD_NN_DE:
 				  {
-									  int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-									  _RAM[position] = _RE_A;
-									  _RAM[position + 1] = _RD_A;
+									  WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), DEasWord());
 									  opcost = 4;
 				  }
 				   break;
 				  case OP_LD_DD_NN_HL:
 				  {
-									  int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-									  _RAM[position] = _RL_A;
-									  _RAM[position + 1] = _RH_A;
+									  WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), HLasWord());
 									  opcost = 4;
 				  }
 				   break;
 				  case OP_LD_DD_NN_SP:
 				  {
-									  int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-									  _RAM[position] = (_RSP >> (8 * 0)) & 0xff;
-									  _RAM[position + 1] = (_RSP >> (8 * 1)) & 0xff;
+									  WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), _RSP);
 									  opcost = 4;
 				  }
 				   break;
@@ -541,12 +532,16 @@ int main()
 				   break;
 				  case OP_ETS_LDIR:
 				  {
-								   while (BCasWord() != 0)
+								   int iterations = BCasWord();
+								   if (iterations == 0)iterations = 64;
+								   while (iterations != 0)
 								   {
+									iterations--;
 									_RAM[DEasWord()] = _RAM[HLasWord()];
 									IncrementHL();
 									IncrementDE();
 									DecrementBC();
+									Instructions++;
 								   }
 								   SetFlag((BCasWord() != 0), FLAG_P);
 								   SetFlag(0, FLAG_H);
@@ -658,8 +653,11 @@ int main()
 				  case OP_MATH_ADC_HL_HL: Math_Add_SS_HL(HLasWord(), 1); break;
 				  case OP_MATH_ADC_SP_HL: Math_Add_SS_HL(_RSP, 1); break;
 				  case OP_ED_IM_1: _InterruptMode = 1; break;
-				  case OP_MATH_SBC_HL_DE: Math_Sub_SS_HL(DEasWord() + (GetFlag(FLAG_C)!=0),0); break;
-				   case OP_IO_IN_C_A:break;
+				  case OP_MATH_SBC_HL_BC: Math_Sub_SS_HL(BCasWord() + (GetFlag(FLAG_C) != 0), 0); break;
+				  case OP_MATH_SBC_HL_DE: Math_Sub_SS_HL(DEasWord() + (GetFlag(FLAG_C) != 0), 0); break;
+				  case OP_MATH_SBC_HL_HL: Math_Sub_SS_HL(HLasWord() + (GetFlag(FLAG_C) != 0), 0); break;
+				  case OP_MATH_SBC_HL_SP: Math_Sub_SS_HL(_RSP + (GetFlag(FLAG_C) != 0), 0); break;
+				  case OP_IO_IN_C_A:break;
 				  default:
 				  {
 						  printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
@@ -1117,8 +1115,8 @@ int main()
    case OP_SK_JR_C_E:
    {
 					 if (GetFlag(FLAG_C) != 0){
-					  byte jump = _RAM[_RPC + 1];
-					  signed char tc = jump;
+					  signed char jump = _RAM[_RPC + 1];
+
 					  _RPC += jump;
 					  opcost = 0;
 					 }
@@ -1126,25 +1124,22 @@ int main()
    case OP_SK_JR_NC_E:
    {
 					  if (GetFlag(FLAG_C) == 0){
-					   byte jump = _RAM[_RPC + 1];
-					   signed char tc = jump;
+					   signed char jump = _RAM[_RPC + 1];
 					   _RPC += jump;
-					   opcost = 0;
+					   opcost = 2;
 					  }
    }
 	break;
    case OP_SK_JR_E:
    {
-				   byte jump = _RAM[_RPC + 1];
-				   signed char tc = jump;
+				   signed char jump = _RAM[_RPC + 1];
 				   _RPC += jump;
    }
 	break;
    case OP_SK_JR_Z:
    {
 				   if (GetFlag(FLAG_Z) != 0){
-					byte jump = _RAM[_RPC + 1];
-					signed char tc = jump;
+					signed char jump = _RAM[_RPC + 1];
 					_RPC += jump;
 				   }
    }
@@ -1153,8 +1148,7 @@ int main()
    {
 				   _RB_A--;
 				   if (_RB_A != 0){
-					byte jump = _RAM[_RPC + 1];
-					signed char tc = jump;
+					signed char jump = _RAM[_RPC + 1];
 					_RPC += jump;
 				   }
    }

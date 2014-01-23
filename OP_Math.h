@@ -127,4 +127,7 @@
 #define OP_MATH_DEC_HL 0x2B
 #define OP_MATH_DEC_SP 0x3B
 
+#define OP_MATH_SBC_HL_BC 0x42
 #define OP_MATH_SBC_HL_DE 0x52
+#define OP_MATH_SBC_HL_HL 0x62
+#define OP_MATH_SBC_HL_SP 0x72
