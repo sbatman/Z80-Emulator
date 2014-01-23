@@ -15,6 +15,11 @@ void WriteWordAtAddress(word address, word wordToWrite)
  _RAM[address] = (wordToWrite >> (8 * 0)) & 0xff;
  _RAM[address + 1] = (wordToWrite >> (8 * 1)) & 0xff;
 }
+void WriteByteAtAddress(word address, byte byteToWrite)
+{
+ _RAM[address] = byteToWrite;
+ 
+}
 
 word BytesToWord(byte H, byte L){
  return H << 8 | L;

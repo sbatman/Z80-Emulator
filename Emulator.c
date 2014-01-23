@@ -427,13 +427,13 @@ int main()
    }
 	break;
 
-   case OP_LD_A_HL: _RAM[_RH_A << 8 | _RL_A] = _RA_A; break;
-   case OP_LD_B_HL: _RAM[_RH_A << 8 | _RL_A] = _RB_A; break;
-   case OP_LD_C_HL: _RAM[_RH_A << 8 | _RL_A] = _RC_A; break;
-   case OP_LD_D_HL: _RAM[_RH_A << 8 | _RL_A] = _RD_A; break;
-   case OP_LD_E_HL: _RAM[_RH_A << 8 | _RL_A] = _RE_A; break;
-   case OP_LD_H_HL: _RAM[_RH_A << 8 | _RL_A] = _RH_A; break;
-   case OP_LD_L_HL: _RAM[_RH_A << 8 | _RL_A] = _RL_A; break;
+   case OP_LD_A_HL: WriteByteAtAddress(HLasWord(), _RA_A); break;
+   case OP_LD_B_HL:  WriteByteAtAddress(HLasWord(), _RB_A); break;
+   case OP_LD_C_HL:  WriteByteAtAddress(HLasWord(), _RC_A); break;
+   case OP_LD_D_HL: WriteByteAtAddress(HLasWord(), _RD_A); break;
+   case OP_LD_E_HL:  WriteByteAtAddress(HLasWord(), _RE_A); break;
+   case OP_LD_H_HL:  WriteByteAtAddress(HLasWord(), _RH_A); break;
+   case OP_LD_L_HL:  WriteByteAtAddress(HLasWord(), _RL_A); break;
 
    case OP_LD_N_HL: _RAM[_RH_A << 8 | _RL_A] = _RAM[_RPC + 1]; break;
    case OP_LD_BC_A: _RA_A = _RAM[_RB_A << 8 | _RC_A]; break;
@@ -958,14 +958,7 @@ int main()
 				   opcost = 0;
    }
 	break;
-   case OP_SK_JR_NZ_E:
-   {
-					  if (GetFlag(FLAG_Z) == 0)
-					  {
-					   _RPC += _RAM[_RPC + 1];
-					  }
-   }
-	break;
+   case OP_SK_JR_NZ_E: if (GetFlag(FLAG_Z) == 0)	_RPC += _RAM[_RPC + 1];	break;
    case OP_RST_00H:
    {
 				   Stack_Push_Word(_RPC);
