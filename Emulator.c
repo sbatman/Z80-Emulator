@@ -20,7 +20,7 @@ void Init()
 
 void PrintStatus(byte currentOpcode, double ips)
 {
-	printf("IPMS: %f\n", ips);
+	printf("IPS: %f\n", ips);
 	printf("Current Addresss : %x \n", _RPC);
 	printf("Current OpCode : %x \n", currentOpcode);
 	printf("Current Stack Pointer : %x \n", _RSP);
@@ -62,11 +62,11 @@ int main()
 	for (;;)
 	{
 		int next = _RAM[_RPC];
-		if (DrawConsoleUpdate > 100000000)
+		if (DrawConsoleUpdate > 1000000000)
 		{
 			DrawConsoleUpdate = 0;
 			system("cls");
-			float ips = Instructions / (float) ((clock() - startTime));
+			float ips = Instructions / (float) (((clock() - startTime)/CLOCKS_PER_SEC));
 			PrintStatus(next, ips);
 		}
 		int opcost = CounterStep[next];
