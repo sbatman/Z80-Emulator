@@ -30,3 +30,8 @@ word ReadWordAtAddress(word address)
 	return BytesToWord(_RAM[address + 1], _RAM[address ]);
 }
 
+byte ReadByteAtAddress(word address)
+{
+	return _RAM[address];
+}
+

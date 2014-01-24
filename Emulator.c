@@ -55,20 +55,23 @@ int main()
 {
 	long long startTime = clock() - 1;
 	long long Instructions = 0;
+	long long DrawConsoleUpdate = 0;
 	Init();
 	printf("START\n");
 	PrepTest();
 	for (;;)
 	{
 		int next = _RAM[_RPC];
-		if (Instructions % 10000000 == 0)
+		if (DrawConsoleUpdate > 100000000)
 		{
+			DrawConsoleUpdate = 0;
 			system("cls");
 			float ips = Instructions / (float) ((clock() - startTime));
 			PrintStatus(next, ips);
 		}
 		int opcost = CounterStep[next];
 		Instructions++;
+		DrawConsoleUpdate++;
 		switch (next)
 		{
 			case OP_NOP:
@@ -351,13 +354,13 @@ int main()
 					case OP_SK_POP_HL:
 					{
 						Stack_Pop_Word(_RIX);
-						opcost=2;
+						opcost = 2;
 					}
 					break;
 					case OP_ETS_E_HL_SP:
 					{
 						WriteWordAtAddress(_RSP, _RIX);
-						opcost=2;
+						opcost = 2;
 					}
 					break;
 					case OP_MATH_ADD_HL_A:
@@ -614,13 +617,13 @@ int main()
 				WriteByteAtAddress(HLasWord(), _RAM[_RPC + 1]);
 				break;
 			case OP_LD_BC_A:
-				_RA_A = ReadWordAtAddress(BCasWord());
+				_RA_A = ReadByteAtAddress(BCasWord());
 				break;
 			case OP_LD_DE_A:
-				_RA_A = ReadWordAtAddress(DEasWord());
+				_RA_A = ReadByteAtAddress(DEasWord());
 				break;
 			case OP_LD_NN_A:
-				_RA_A = ReadWordAtAddress(BytesToWord(_RPC + 2, _RPC + 1));
+				_RA_A = ReadByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1));
 			case OP_LD_A_BC:
 				WriteByteAtAddress(BCasWord(), _RA_A);
 				break;
@@ -769,9 +772,9 @@ int main()
 					case OP_ETS_CPI:
 					{
 						if (_RAM[HLasWord()] == _RA_A)
-							_RF_A |= 1 << FLAG_Z;
+							SetFlag(1, FLAG_Z);
 						else
-							_RF_A |= 0 << FLAG_Z;
+							SetFlag(0, FLAG_Z);
 						DecrementBC();
 						IncrementHL();
 						SetFlag((BCasWord() - 1 != 0), FLAG_P);
