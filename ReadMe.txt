@@ -1,40 +1,30 @@
-========================================================================
-    CONSOLE APPLICATION : Emulator Project Overview
-========================================================================
+Emulator
+=======
 
-AppWizard has created this Emulator application for you.
+Description
+--------
+This is an emulator written for the Z80 processor in C
 
-This file contains a summary of what you will find in each of the files that
-make up your Emulator application.
+Team
+--------
+Steven Batchelor-Manning 
 
+Resources
+--------
+http://www.z80.info/z80oplist.txt - Opcode information
+http://bit.ly/1m01hiE - Detailed core and instruction info
 
-Emulator.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+Licence
+--------
+This work is covered under the Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) licence.
+This project/source and derivative works can not be used as a part of or in combination with any code or
+binarys involed directly or indirectly with the social or real money gambling industry.
+More information can be found about the liecence here http://creativecommons.org/licenses/by-sa/3.0/
+If you wish to discuss the licencing terms please contact Steven Batchelor-Manning
 
-Emulator.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-Emulator.cpp
-    This is the main application source file.
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named Emulator.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+Versioning
+--------
+Versioning is maintained by Steven Batchelor-Manning with the format a.b.c
+a - is incremented to mark the completion of a significent update phase
+b - is incremented to mark the merging of development into master
+c - is incremended to mark a hotfix to master (and as such not often used)

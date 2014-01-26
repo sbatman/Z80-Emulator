@@ -90,4 +90,31 @@
 #define OP_LD_A_BC 0x02
 #define OP_LD_A_DE 0x12
 #define OP_LD_A_NN 0x32
-#define OP_LD_I_A 0xED
+
+#define OP_LD_ED 0xED
+#define OP_LD_I_A 0x57
+#define OP_LD_R_A 0x5F
+#define OP_LD_A_I 0x47
+#define OP_LD_A_R 0x4F
+
+//16-bit load group
+#define OP_LD_NN_BC 0x01
+#define OP_LD_NN_DE 0x11
+#define OP_LD_NN_HL 0x21
+#define OP_LD_NN_SP 0x31
+
+#define OP_LD_NN_HL_M 0x2A
+
+#define OP_LD_NN_DD_BC 0x4B
+#define OP_LD_NN_DD_DE 0x5B
+#define OP_LD_NN_DD_HL 0x6B
+#define OP_LD_NN_DD_SP 0x7B
+
+#define OP_LD_HL_NN 0x22
+
+#define OP_LD_DD_NN_BC 0x43
+#define OP_LD_DD_NN_DE 0x53
+#define OP_LD_DD_NN_HL 0x63
+#define OP_LD_DD_NN_SP 0x73
+
+#define OP_LD_HL_SP 0xF9
