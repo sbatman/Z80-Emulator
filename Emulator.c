@@ -62,13 +62,14 @@ int main()
 	for (;;)
 	{
 		int next = _RAM[_RPC];
-		if (DrawConsoleUpdate > 1000000000)
+		if (DrawConsoleUpdate > 100000)
 		{
 			DrawConsoleUpdate = 0;
 			system("cls");
 			float ips = Instructions / (float) (((clock() - startTime)/CLOCKS_PER_SEC));
 			PrintStatus(next, ips);
 		}
+		if (Instructions>1000000)break;
 		int opcost = CounterStep[next];
 		Instructions++;
 		DrawConsoleUpdate++;
@@ -423,6 +424,10 @@ int main()
 						opcost = 3;
 					}
 					break;
+					case OP_MATH_ADD_BC_IX: Math_Add_PP_IX(BCasWord(), 0); opcost = 2; break;
+					case OP_MATH_ADD_DE_IX: Math_Add_PP_IX(DEasWord(), 0); opcost = 2; break;
+					case OP_MATH_ADD_IX_IX:Math_Add_PP_IX(_RIX, 0); opcost = 2; break;
+					case OP_MATH_ADD_SP_IX:Math_Add_PP_IX(_RSP, 0); opcost = 2; break;
 					default:
 					{
 						printf("Unkown opcode IX:%i \n", _RAM[_RPC + 1]);
@@ -1551,7 +1556,7 @@ int main()
 			break;
 			case OP_RAS_RLCA:
 			{
-				int hbit = (_RA_A % 0x80) != 0;
+				int hbit = (_RA_A & 0x80) != 0;
 				_RA_A = _RA_A << 1;
 				if (hbit)_RA_A |= 0x01;
 			}

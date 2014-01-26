@@ -23,6 +23,27 @@ void Math_Add_SS_HL(word value, bool addCarry)
 	SetFlag(0, FLAG_N);
 }
 
+void Math_Add_PP_IX(word value, bool addCarry)
+{
+	int total =_RIX;
+	if (GetFlag(FLAG_C) && addCarry)value++;
+	SetFlag(((total & 0x0fff) + (value & 0x0fff)) & 0x1000, FLAG_H);
+	total += value;
+	SetFlag(total & 0x10000, FLAG_C);
+	if (addCarry)
+	{
+		int partASign = _RIX & 0x8000;
+		int partBSign = value & 0x8000;
+		int resultSign = total & 0x8000;
+		SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
+		SetFlag((total & 0x8000) != 0, FLAG_S);
+		SetFlag(total == 0, FLAG_Z);
+	}
+	_RIX = total;
+	SetFlag(0, FLAG_N);
+}
+
+
 void Math_Sub_SS_HL(word value, bool addCarry)
 {
 	word total = HLasWord();

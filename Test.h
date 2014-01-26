@@ -5,7 +5,7 @@
 
 void PrepTest()
 {
-	FILE * f = fopen("test.bin", "rb");
+	FILE * f = fopen("TestGraphicsMemory.bin", "rb");
 	fread(_RAM, 10000, 1, f);
 }
 

@@ -131,3 +131,8 @@
 #define OP_MATH_SBC_HL_DE 0x52
 #define OP_MATH_SBC_HL_HL 0x62
 #define OP_MATH_SBC_HL_SP 0x72
+
+#define OP_MATH_ADD_BC_IX 0x09
+#define OP_MATH_ADD_DE_IX 0x19
+#define OP_MATH_ADD_IX_IX 0x29
+#define OP_MATH_ADD_SP_IX 0x39

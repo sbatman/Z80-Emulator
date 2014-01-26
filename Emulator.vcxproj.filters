@@ -17,9 +17,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Emulator.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,5 +70,8 @@
     <ClInclude Include="RAS.h">
       <Filter>Header Files\Functions</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
   </ItemGroup>
 </Project>
