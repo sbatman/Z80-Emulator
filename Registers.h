@@ -102,7 +102,7 @@ word DEasWord()
 
 word HLasWord()
 {
-	return _RH_A << 8 | _RL_A;
+	return HLasWord();
 }
 
 void DecrementBC()

@@ -2,7 +2,6 @@
 #include "Ram.h"
 #include "Opcodes.h"
 #include "CounterStep.h"
-#include "Test.h"
 #include "Math.h"
 #include "RAS.h"
 #include "Stack.h"
@@ -58,273 +57,111 @@ int main()
 	long long DrawConsoleUpdate = 0;
 	Init();
 	printf("START\n");
-	PrepTest();
+	LoadRomFromFile("Roms/TestGraphicsMemory.bin");
 	for (;;)
 	{
 		int next = _RAM[_RPC];
 		if (DrawConsoleUpdate > 100000)
 		{
 			DrawConsoleUpdate = 0;
+#ifdef _WIN32
 			system("cls");
-			float ips = Instructions / (float) (((clock() - startTime)/CLOCKS_PER_SEC));
+#else
+			system("clear");
+#endif
+			float ips = Instructions / (float) (((clock() - startTime) / CLOCKS_PER_SEC));
 			PrintStatus(next, ips);
 		}
-		if (Instructions>1000000)break;
 		int opcost = CounterStep[next];
 		Instructions++;
 		DrawConsoleUpdate++;
 		switch (next)
 		{
-			case OP_NOP:
-				break;
-			case OP_LD_A_A:
-				_RA_A = _RA_A;
-				break;
-			case OP_LD_B_A:
-				_RA_A = _RB_A;
-				break;
-			case OP_LD_C_A:
-				_RA_A = _RC_A;
-				break;
-			case OP_LD_D_A:
-				_RA_A = _RD_A;
-				break;
-			case OP_LD_E_A:
-				_RA_A = _RE_A;
-				break;
-			case OP_LD_H_A:
-				_RA_A = _RH_A;
-				break;
-			case OP_LD_L_A:
-				_RA_A = _RL_A;
-				break;
-			case OP_LD_A_B:
-				_RB_A = _RA_A;
-				break;
-			case OP_LD_B_B:
-				_RB_A = _RB_A;
-				break;
-			case OP_LD_C_B:
-				_RB_A = _RC_A;
-				break;
-			case OP_LD_D_B:
-				_RB_A = _RD_A;
-				break;
-			case OP_LD_E_B:
-				_RB_A = _RE_A;
-				break;
-			case OP_LD_H_B:
-				_RB_A = _RH_A;
-				break;
-			case OP_LD_L_B:
-				_RB_A = _RL_A;
-				break;
-			case OP_LD_A_C:
-				_RC_A = _RA_A;
-				break;
-			case OP_LD_B_C:
-				_RC_A = _RB_A;
-				break;
-			case OP_LD_C_C:
-				_RC_A = _RC_A;
-				break;
-			case OP_LD_D_C:
-				_RC_A = _RD_A;
-				break;
-			case OP_LD_E_C:
-				_RC_A = _RE_A;
-				break;
-			case OP_LD_H_C:
-				_RC_A = _RH_A;
-				break;
-			case OP_LD_L_C:
-				_RC_A = _RL_A;
-				break;
-			case OP_LD_A_D:
-				_RD_A = _RA_A;
-				break;
-			case OP_LD_B_D:
-				_RD_A = _RB_A;
-				break;
-			case OP_LD_C_D:
-				_RD_A = _RC_A;
-				break;
-			case OP_LD_D_D:
-				_RD_A = _RD_A;
-				break;
-			case OP_LD_E_D:
-				_RD_A = _RE_A;
-				break;
-			case OP_LD_H_D:
-				_RD_A = _RH_A;
-				break;
-			case OP_LD_L_D:
-				_RD_A = _RL_A;
-				break;
-			case OP_LD_A_E:
-				_RE_A = _RA_A;
-				break;
-			case OP_LD_B_E:
-				_RE_A = _RB_A;
-				break;
-			case OP_LD_C_E:
-				_RE_A = _RC_A;
-				break;
-			case OP_LD_D_E:
-				_RE_A = _RD_A;
-				break;
-			case OP_LD_E_E:
-				_RE_A = _RE_A;
-				break;
-			case OP_LD_H_E:
-				_RE_A = _RH_A;
-				break;
-			case OP_LD_L_E:
-				_RE_A = _RL_A;
-				break;
-			case OP_LD_A_H:
-				_RH_A = _RA_A;
-				break;
-			case OP_LD_B_H:
-				_RH_A = _RB_A;
-				break;
-			case OP_LD_C_H:
-				_RH_A = _RC_A;
-				break;
-			case OP_LD_D_H:
-				_RH_A = _RD_A;
-				break;
-			case OP_LD_E_H:
-				_RH_A = _RE_A;
-				break;
-			case OP_LD_H_H:
-				_RH_A = _RH_A;
-				break;
-			case OP_LD_L_H:
-				_RH_A = _RL_A;
-				break;
-			case OP_LD_A_L:
-				_RL_A = _RA_A;
-				break;
-			case OP_LD_B_L:
-				_RL_A = _RB_A;
-				break;
-			case OP_LD_C_L:
-				_RL_A = _RC_A;
-				break;
-			case OP_LD_D_L:
-				_RL_A = _RD_A;
-				break;
-			case OP_LD_E_L:
-				_RL_A = _RE_A;
-				break;
-			case OP_LD_H_L:
-				_RL_A = _RH_A;
-				break;
-			case OP_LD_L_L:
-				_RL_A = _RL_A;
-				break;
-			case OP_LD_N_A:
-				_RA_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_B:
-				_RB_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_C:
-				_RC_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_D:
-				_RD_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_E:
-				_RE_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_H:
-				_RH_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_N_L:
-				_RL_A = _RAM[_RPC + 1];
-				break;
-			case OP_LD_HL_A:
-				_RA_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_B:
-				_RB_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_C:
-				_RC_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_D:
-				_RD_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_E:
-				_RE_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_H:
-				_RH_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
-			case OP_LD_HL_L:
-				_RL_A = _RAM[_RH_A << 8 | _RL_A];
-				break;
+			case OP_NOP:				break;
+			case OP_LD_A_A:	_RA_A = _RA_A;	break;
+			case OP_LD_B_A:	_RA_A = _RB_A;	break;
+			case OP_LD_C_A:	_RA_A = _RC_A;	break;
+			case OP_LD_D_A:	_RA_A = _RD_A;	break;
+			case OP_LD_E_A:	_RA_A = _RE_A;	break;
+			case OP_LD_H_A:	_RA_A = _RH_A;	break;
+			case OP_LD_L_A:	_RA_A = _RL_A;	break;
+			case OP_LD_A_B:	_RB_A = _RA_A;	break;
+			case OP_LD_B_B:	_RB_A = _RB_A;	break;
+			case OP_LD_C_B:	_RB_A = _RC_A;	break;
+			case OP_LD_D_B:	_RB_A = _RD_A;	break;
+			case OP_LD_E_B:	_RB_A = _RE_A;	break;
+			case OP_LD_H_B:	_RB_A = _RH_A;	break;
+			case OP_LD_L_B:	_RB_A = _RL_A;	break;
+			case OP_LD_A_C:	_RC_A = _RA_A;	break;
+			case OP_LD_B_C:	_RC_A = _RB_A;	break;
+			case OP_LD_C_C:	_RC_A = _RC_A;	break;
+			case OP_LD_D_C:	_RC_A = _RD_A;	break;
+			case OP_LD_E_C:	_RC_A = _RE_A;	break;
+			case OP_LD_H_C:	_RC_A = _RH_A;	break;
+			case OP_LD_L_C:	_RC_A = _RL_A;	break;
+			case OP_LD_A_D:	_RD_A = _RA_A;	break;
+			case OP_LD_B_D:	_RD_A = _RB_A;	break;
+			case OP_LD_C_D:	_RD_A = _RC_A;	break;
+			case OP_LD_D_D:	_RD_A = _RD_A;	break;
+			case OP_LD_E_D:	_RD_A = _RE_A;	break;
+			case OP_LD_H_D:	_RD_A = _RH_A;	break;
+			case OP_LD_L_D:	_RD_A = _RL_A;	break;
+			case OP_LD_A_E:	_RE_A = _RA_A;	break;
+			case OP_LD_B_E:	_RE_A = _RB_A;	break;
+			case OP_LD_C_E:	_RE_A = _RC_A;	break;
+			case OP_LD_D_E:	_RE_A = _RD_A;	break;
+			case OP_LD_E_E:	_RE_A = _RE_A;	break;
+			case OP_LD_H_E:	_RE_A = _RH_A;	break;
+			case OP_LD_L_E:	_RE_A = _RL_A;	break;
+			case OP_LD_A_H:	_RH_A = _RA_A;	break;
+			case OP_LD_B_H:	_RH_A = _RB_A;	break;
+			case OP_LD_C_H:	_RH_A = _RC_A;	break;
+			case OP_LD_D_H:	_RH_A = _RD_A;	break;
+			case OP_LD_E_H:	_RH_A = _RE_A;	break;
+			case OP_LD_H_H:	_RH_A = _RH_A;	break;
+			case OP_LD_L_H:	_RH_A = _RL_A;	break;
+			case OP_LD_A_L:	_RL_A = _RA_A;	break;
+			case OP_LD_B_L:	_RL_A = _RB_A;	break;
+			case OP_LD_C_L:	_RL_A = _RC_A;	break;
+			case OP_LD_D_L:	_RL_A = _RD_A;	break;
+			case OP_LD_E_L:	_RL_A = _RE_A;	break;
+			case OP_LD_H_L:	_RL_A = _RH_A;	break;
+			case OP_LD_L_L:	_RL_A = _RL_A;	break;
+			case OP_LD_N_A:	_RA_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_B:	_RB_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_C:	_RC_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_D:	_RD_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_E:	_RE_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_H:	_RH_A = _RAM[_RPC + 1];	break;
+			case OP_LD_N_L:	_RL_A = _RAM[_RPC + 1];	break;
+			case OP_LD_HL_A:	_RA_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_B:	_RB_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_C:	_RC_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_D:	_RD_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_E:	_RE_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_H:	_RH_A = _RAM[HLasWord()];	break;
+			case OP_LD_HL_L:	_RL_A = _RAM[HLasWord()];	break;
 			case OP_LD_IXD_R:
 			{
 				byte n = _RAM[_RPC + 2];
 				switch (_RAM[_RPC + 1])
 				{
-					case OP_LD_HL_A:
-						_RA_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_B:
-						_RB_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_C:
-						_RC_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_D:
-						_RD_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_E:
-						_RE_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_H:
-						_RH_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_HL_L:
-						_RL_A = _RAM[_RIX + n];
-						break;
-					case OP_LD_A_HL:
-						_RAM[_RIX + n] = _RA_A;
-						break;
-					case OP_LD_B_HL:
-						_RAM[_RIX + n] = _RB_A;
-						break;
-					case OP_LD_C_HL:
-						_RAM[_RIX + n] = _RC_A;
-						break;
-					case OP_LD_D_HL:
-						_RAM[_RIX + n] = _RD_A;
-						break;
-					case OP_LD_E_HL:
-						_RAM[_RIX + n] = _RE_A;
-						break;
-					case OP_LD_H_HL:
-						_RAM[_RIX + n] = _RH_A;
-						break;
-					case OP_LD_L_HL:
-						_RAM[_RIX + n] = _RL_A;
-						break;
-					case OP_LD_N_HL:
-					{
-						_RAM[_RIX + n] = _RAM[_RPC + 3];
-						opcost = 4;
-					}
-					break;
-					case OP_LD_NN_HL:
-					{
-						_RIX = ReadWordAtAddress(_RPC + 2);
-						opcost = 4;
-					}
-					break;
+					case OP_LD_HL_A: _RA_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_B: _RB_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_C: _RC_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_D: _RD_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_E: _RE_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_H: _RH_A = _RAM[_RIX + n];	break;
+					case OP_LD_HL_L: _RL_A = _RAM[_RIX + n];	break;
+					case OP_LD_A_HL: _RAM[_RIX + n] = _RA_A;	break;
+					case OP_LD_B_HL: _RAM[_RIX + n] = _RB_A;	break;
+					case OP_LD_C_HL: _RAM[_RIX + n] = _RC_A;	break;
+					case OP_LD_D_HL: _RAM[_RIX + n] = _RD_A;	break;
+					case OP_LD_E_HL: _RAM[_RIX + n] = _RE_A;	break;
+					case OP_LD_H_HL: _RAM[_RIX + n] = _RH_A;	break;
+					case OP_LD_L_HL: _RAM[_RIX + n] = _RL_A;	break;
+					case OP_LD_N_HL: _RAM[_RIX + n] = _RAM[_RPC + 3];	opcost = 4;	break;
+					case OP_LD_NN_HL:_RIX = ReadWordAtAddress(_RPC + 2);	opcost = 4;	break;
 					case OP_LD_NN_HL_M:
 					{
 						int position = ReadWordAtAddress(_RPC + 2);
@@ -418,12 +255,7 @@ int main()
 						opcost = 3;
 					}
 					break;
-					case OP_MATH_DEC_HL_A:
-					{
-						Math_Dec_Byte(_RAM[_RIX + n]);
-						opcost = 3;
-					}
-					break;
+					case OP_MATH_DEC_HL_A:Math_Dec_Byte(_RAM[_RIX + n]); opcost = 3; break;
 					case OP_MATH_ADD_BC_IX: Math_Add_PP_IX(BCasWord(), 0); opcost = 2; break;
 					case OP_MATH_ADD_DE_IX: Math_Add_PP_IX(DEasWord(), 0); opcost = 2; break;
 					case OP_MATH_ADD_IX_IX:Math_Add_PP_IX(_RIX, 0); opcost = 2; break;
@@ -597,47 +429,20 @@ int main()
 				}
 			}
 			break;
-			case OP_LD_A_HL:
-				WriteByteAtAddress(HLasWord(), _RA_A);
-				break;
-			case OP_LD_B_HL:
-				WriteByteAtAddress(HLasWord(), _RB_A);
-				break;
-			case OP_LD_C_HL:
-				WriteByteAtAddress(HLasWord(), _RC_A);
-				break;
-			case OP_LD_D_HL:
-				WriteByteAtAddress(HLasWord(), _RD_A);
-				break;
-			case OP_LD_E_HL:
-				WriteByteAtAddress(HLasWord(), _RE_A);
-				break;
-			case OP_LD_H_HL:
-				WriteByteAtAddress(HLasWord(), _RH_A);
-				break;
-			case OP_LD_L_HL:
-				WriteByteAtAddress(HLasWord(), _RL_A);
-				break;
-			case OP_LD_N_HL:
-				WriteByteAtAddress(HLasWord(), _RAM[_RPC + 1]);
-				break;
-			case OP_LD_BC_A:
-				_RA_A = ReadByteAtAddress(BCasWord());
-				break;
-			case OP_LD_DE_A:
-				_RA_A = ReadByteAtAddress(DEasWord());
-				break;
-			case OP_LD_NN_A:
-				_RA_A = ReadByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1));
-			case OP_LD_A_BC:
-				WriteByteAtAddress(BCasWord(), _RA_A);
-				break;
-			case OP_LD_A_DE:
-				WriteByteAtAddress(DEasWord(), _RA_A);
-				break;
-			case OP_LD_A_NN:
-				WriteByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1), _RA_A);
-				break;
+			case OP_LD_A_HL:	WriteByteAtAddress(HLasWord(), _RA_A);	break;
+			case OP_LD_B_HL:	WriteByteAtAddress(HLasWord(), _RB_A);	break;
+			case OP_LD_C_HL:	WriteByteAtAddress(HLasWord(), _RC_A);	break;
+			case OP_LD_D_HL:	WriteByteAtAddress(HLasWord(), _RD_A);	break;
+			case OP_LD_E_HL:	WriteByteAtAddress(HLasWord(), _RE_A);	break;
+			case OP_LD_H_HL:	WriteByteAtAddress(HLasWord(), _RH_A);	break;
+			case OP_LD_L_HL:	WriteByteAtAddress(HLasWord(), _RL_A);	break;
+			case OP_LD_N_HL:	WriteByteAtAddress(HLasWord(), _RAM[_RPC + 1]);	break;
+			case OP_LD_BC_A:	_RA_A = ReadByteAtAddress(BCasWord());	break;
+			case OP_LD_DE_A:	_RA_A = ReadByteAtAddress(DEasWord());	break;
+			case OP_LD_NN_A:	_RA_A = ReadByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1));	break;
+			case OP_LD_A_BC:	WriteByteAtAddress(BCasWord(), _RA_A);	break;
+			case OP_LD_A_DE:	WriteByteAtAddress(DEasWord(), _RA_A);	break;
+			case OP_LD_A_NN:	WriteByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1), _RA_A);	break;
 			case OP_LD_ED:
 			{
 				switch (_RAM[_RPC + 1])
@@ -839,35 +644,16 @@ int main()
 						SetFlag(1, FLAG_N);
 					}
 					break;
-					case OP_MATH_ADC_BC_HL:
-						Math_Add_SS_HL(BCasWord(), 1);
-						break;
-					case OP_MATH_ADC_DE_HL:
-						Math_Add_SS_HL(DEasWord(), 1);
-						break;
-					case OP_MATH_ADC_HL_HL:
-						Math_Add_SS_HL(HLasWord(), 1);
-						break;
-					case OP_MATH_ADC_SP_HL:
-						Math_Add_SS_HL(_RSP, 1);
-						break;
-					case OP_ED_IM_1:
-						_InterruptMode = 1;
-						break;
-					case OP_MATH_SBC_HL_BC:
-						Math_Sub_SS_HL(BCasWord() + (GetFlag(FLAG_C) != 0), 0);
-						break;
-					case OP_MATH_SBC_HL_DE:
-						Math_Sub_SS_HL(DEasWord() + (GetFlag(FLAG_C) != 0), 0);
-						break;
-					case OP_MATH_SBC_HL_HL:
-						Math_Sub_SS_HL(HLasWord() + (GetFlag(FLAG_C) != 0), 0);
-						break;
-					case OP_MATH_SBC_HL_SP:
-						Math_Sub_SS_HL(_RSP + (GetFlag(FLAG_C) != 0), 0);
-						break;
-					case OP_IO_IN_C_A:
-						break;
+					case OP_MATH_ADC_BC_HL:	Math_Add_SS_HL(BCasWord(), 1);	break;
+					case OP_MATH_ADC_DE_HL:	Math_Add_SS_HL(DEasWord(), 1);	break;
+					case OP_MATH_ADC_HL_HL:	Math_Add_SS_HL(HLasWord(), 1);	break;
+					case OP_MATH_ADC_SP_HL:	Math_Add_SS_HL(_RSP, 1);	break;
+					case OP_ED_IM_1:	_InterruptMode = 1;	break;
+					case OP_MATH_SBC_HL_BC:	Math_Sub_SS_HL(BCasWord() + (GetFlag(FLAG_C) != 0), 0);	break;
+					case OP_MATH_SBC_HL_DE:	Math_Sub_SS_HL(DEasWord() + (GetFlag(FLAG_C) != 0), 0);	break;
+					case OP_MATH_SBC_HL_HL:	Math_Sub_SS_HL(HLasWord() + (GetFlag(FLAG_C) != 0), 0);	break;
+					case OP_MATH_SBC_HL_SP:	Math_Sub_SS_HL(_RSP + (GetFlag(FLAG_C) != 0), 0);	break;
+					case OP_IO_IN_C_A:	break;
 					default:
 					{
 						printf("Unkown opcode ED : %i \n", _RAM[_RPC + 1]);
@@ -995,270 +781,94 @@ int main()
 				_RH_A = high;
 			}
 			break;
-			case OP_MATH_ADD_A_A:
-				Math_Add_A_R(_RA_A, 0);
-				break;
-			case OP_MATH_ADD_B_A:
-				Math_Add_A_R(_RB_A, 0);
-				break;
-			case OP_MATH_ADD_C_A:
-				Math_Add_A_R(_RC_A, 0);
-				break;
-			case OP_MATH_ADD_D_A:
-				Math_Add_A_R(_RD_A, 0);
-				break;
-			case OP_MATH_ADD_E_A:
-				Math_Add_A_R(_RE_A, 0);
-				break;
-			case OP_MATH_ADD_H_A:
-				Math_Add_A_R(_RH_A, 0);
-				break;
-			case OP_MATH_ADD_L_A:
-				Math_Add_A_R(_RL_A, 0);
-				break;
-			case OP_MATH_ADD_N_A:
-				Math_Add_A_R(_RAM[_RPC + 1], 0);
-				break;
-			case OP_MATH_ADD_HL_A:
-				Math_Add_A_R(_RAM[HLasWord()], 0);
-				break;
-			case OP_MATH_ADC_A_A:
-				Math_Add_A_R(_RA_A, 1);
-				break;
-			case OP_MATH_ADC_B_A:
-				Math_Add_A_R(_RB_A, 1);
-				break;
-			case OP_MATH_ADC_C_A:
-				Math_Add_A_R(_RC_A, 1);
-				break;
-			case OP_MATH_ADC_D_A:
-				Math_Add_A_R(_RD_A, 1);
-				break;
-			case OP_MATH_ADC_E_A:
-				Math_Add_A_R(_RE_A, 1);
-				break;
-			case OP_MATH_ADC_H_A:
-				Math_Add_A_R(_RH_A, 1);
-				break;
-			case OP_MATH_ADC_L_A:
-				Math_Add_A_R(_RL_A, 1);
-				break;
-			case OP_MATH_ADC_N_A:
-				Math_Add_A_R(_RAM[_RPC + 1], 1);
-				break;
-			case OP_MATH_ADC_HL_A:
-				Math_Add_A_R(_RAM[HLasWord()], 1);
-				break;
-			case OP_MATH_SUB_A_A:
-				Math_Sub_A_R(_RA_A, 0);
-				break;
-			case OP_MATH_SUB_A_B:
-				Math_Sub_A_R(_RB_A, 0);
-				break;
-			case OP_MATH_SUB_A_C:
-				Math_Sub_A_R(_RC_A, 0);
-				break;
-			case OP_MATH_SUB_A_D:
-				Math_Sub_A_R(_RD_A, 0);
-				break;
-			case OP_MATH_SUB_A_E:
-				Math_Sub_A_R(_RE_A, 0);
-				break;
-			case OP_MATH_SUB_A_H:
-				Math_Sub_A_R(_RH_A, 0);
-				break;
-			case OP_MATH_SUB_A_L:
-				Math_Sub_A_R(_RL_A, 0);
-				break;
-			case OP_MATH_SUB_N_A:
-				Math_Sub_A_R(_RAM[_RPC + 1], 0);
-				break;
-			case OP_MATH_SUB_HL_A:
-				Math_Sub_A_R(_RAM[HLasWord()], 0);
-				break;
-			case OP_MATH_SBC_A_A:
-				Math_Sub_A_R(_RA_A, 1);
-				break;
-			case OP_MATH_SBC_A_B:
-				Math_Sub_A_R(_RB_A, 1);
-				break;
-			case OP_MATH_SBC_A_C:
-				Math_Sub_A_R(_RC_A, 1);
-				break;
-			case OP_MATH_SBC_A_D:
-				Math_Sub_A_R(_RD_A, 1);
-				break;
-			case OP_MATH_SBC_A_E:
-				Math_Sub_A_R(_RE_A, 1);
-				break;
-			case OP_MATH_SBC_A_H:
-				Math_Sub_A_R(_RH_A, 1);
-				break;
-			case OP_MATH_SBC_A_L:
-				Math_Sub_A_R(_RL_A, 1);
-				break;
-			case OP_MATH_SBC_N_A:
-				Math_Sub_A_R(_RAM[_RPC + 1], 1);
-				break;
-			case OP_MATH_SBC_HL_A:
-				Math_Sub_A_R(_RAM[HLasWord()], 1);
-				break;
-			case OP_MATH_AND_A_A:
-				Math_And_A_R(_RA_A);
-				break;
-			case OP_MATH_AND_A_B:
-				Math_And_A_R(_RB_A);
-				break;
-			case OP_MATH_AND_A_C:
-				Math_And_A_R(_RC_A);
-				break;
-			case OP_MATH_AND_A_D:
-				Math_And_A_R(_RD_A);
-				break;
-			case OP_MATH_AND_A_E:
-				Math_And_A_R(_RE_A);
-				break;
-			case OP_MATH_AND_A_H:
-				Math_And_A_R(_RH_A);
-				break;
-			case OP_MATH_AND_A_L:
-				Math_And_A_R(_RL_A);
-				break;
-			case OP_MATH_AND_N_A:
-				Math_And_A_R(_RAM[_RPC + 1]);
-				break;
-			case OP_MATH_AND_HL_A:
-				Math_And_A_R(_RAM[HLasWord()]);
-				break;
-			case OP_MATH_OR_A_A:
-				Math_Or_A_R(_RA_A);
-				break;
-			case OP_MATH_OR_A_B:
-				Math_Or_A_R(_RB_A);
-				break;
-			case OP_MATH_OR_A_C:
-				Math_Or_A_R(_RC_A);
-				break;
-			case OP_MATH_OR_A_D:
-				Math_Or_A_R(_RD_A);
-				break;
-			case OP_MATH_OR_A_E:
-				Math_Or_A_R(_RE_A);
-				break;
-			case OP_MATH_OR_A_H:
-				Math_Or_A_R(_RH_A);
-				break;
-			case OP_MATH_OR_A_L:
-				Math_Or_A_R(_RL_A);
-				break;
-			case OP_MATH_OR_N_A:
-				Math_Or_A_R(_RAM[_RPC + 1]);
-				break;
-			case OP_MATH_OR_HL_A:
-				Math_Or_A_R(_RAM[HLasWord()]);
-				break;
-			case OP_MATH_XOR_A_A:
-				Math_Xor_A_R(_RA_A);
-				break;
-			case OP_MATH_XOR_A_B:
-				Math_Xor_A_R(_RB_A);
-				break;
-			case OP_MATH_XOR_A_C:
-				Math_Xor_A_R(_RC_A);
-				break;
-			case OP_MATH_XOR_A_D:
-				Math_Xor_A_R(_RD_A);
-				break;
-			case OP_MATH_XOR_A_E:
-				Math_Xor_A_R(_RE_A);
-				break;
-			case OP_MATH_XOR_A_H:
-				Math_Xor_A_R(_RH_A);
-				break;
-			case OP_MATH_XOR_A_L:
-				Math_Xor_A_R(_RL_A);
-				break;
-			case OP_MATH_XOR_N_A:
-				Math_Xor_A_R(_RAM[_RPC + 1]);
-				break;
-			case OP_MATH_XOR_HL_A:
-				Math_Xor_A_R(_RAM[HLasWord()]);
-				break;
-			case OP_MATH_CP_A_A:
-				Math_Cp_A_R(_RA_A);
-				break;
-			case OP_MATH_CP_A_B:
-				Math_Cp_A_R(_RB_A);
-				break;
-			case OP_MATH_CP_A_C:
-				Math_Cp_A_R(_RC_A);
-				break;
-			case OP_MATH_CP_A_D:
-				Math_Cp_A_R(_RD_A);
-				break;
-			case OP_MATH_CP_A_E:
-				Math_Cp_A_R(_RE_A);
-				break;
-			case OP_MATH_CP_A_H:
-				Math_Cp_A_R(_RH_A);
-				break;
-			case OP_MATH_CP_A_L:
-				Math_Cp_A_R(_RL_A);
-				break;
-			case OP_MATH_CP_N_A:
-				Math_Cp_A_R(_RAM[_RPC + 1]);
-				break;
-			case OP_MATH_CP_HL_A:
-				Math_Cp_A_R(_RAM[HLasWord()]);
-				break;
-			case OP_MATH_INC_A_A:
-				_RA_A = Math_Inc_Byte(_RA_A);
-				break;
-			case OP_MATH_INC_A_B:
-				_RB_A = Math_Inc_Byte(_RB_A);
-				break;
-			case OP_MATH_INC_A_C:
-				_RC_A = Math_Inc_Byte(_RC_A);
-				break;
-			case OP_MATH_INC_A_D:
-				_RD_A = Math_Inc_Byte(_RD_A);
-				break;
-			case OP_MATH_INC_A_E:
-				_RE_A = Math_Inc_Byte(_RE_A);
-				break;
-			case OP_MATH_INC_A_H:
-				_RH_A = Math_Inc_Byte(_RH_A);
-				break;
-			case OP_MATH_INC_A_L:
-				_RL_A = Math_Inc_Byte(_RL_A);
-				break;
-			case OP_MATH_INC_HL_A:
-				_RAM[HLasWord()] = Math_Inc_Byte(_RAM[HLasWord()]);
-				break;
-			case OP_MATH_DEC_A_A:
-				_RA_A = Math_Dec_Byte(_RA_A);
-				break;
-			case OP_MATH_DEC_A_B:
-				_RB_A = Math_Dec_Byte(_RB_A);
-				break;
-			case OP_MATH_DEC_A_C:
-				_RC_A = Math_Dec_Byte(_RC_A);
-				break;
-			case OP_MATH_DEC_A_D:
-				_RD_A = Math_Dec_Byte(_RD_A);
-				break;
-			case OP_MATH_DEC_A_E:
-				_RE_A = Math_Dec_Byte(_RE_A);
-				break;
-			case OP_MATH_DEC_A_H:
-				_RH_A = Math_Dec_Byte(_RH_A);
-				break;
-			case OP_MATH_DEC_A_L:
-				_RL_A = Math_Dec_Byte(_RL_A);
-				break;
-			case OP_MATH_DEC_HL_A:
-				_RAM[HLasWord()] = Math_Dec_Byte(_RAM[HLasWord()]);
-				break;
+			case OP_MATH_ADD_A_A:	Math_Add_A_R(_RA_A, 0);	break;
+			case OP_MATH_ADD_B_A:	Math_Add_A_R(_RB_A, 0);	break;
+			case OP_MATH_ADD_C_A:	Math_Add_A_R(_RC_A, 0);	break;
+			case OP_MATH_ADD_D_A:	Math_Add_A_R(_RD_A, 0);	break;
+			case OP_MATH_ADD_E_A:	Math_Add_A_R(_RE_A, 0);	break;
+			case OP_MATH_ADD_H_A:	Math_Add_A_R(_RH_A, 0);	break;
+			case OP_MATH_ADD_L_A:	Math_Add_A_R(_RL_A, 0);	break;
+			case OP_MATH_ADD_N_A:	Math_Add_A_R(_RAM[_RPC + 1], 0);	break;
+			case OP_MATH_ADD_HL_A:	Math_Add_A_R(_RAM[HLasWord()], 0);	break;
+			case OP_MATH_ADC_A_A:	Math_Add_A_R(_RA_A, 1);	break;
+			case OP_MATH_ADC_B_A:	Math_Add_A_R(_RB_A, 1); break;
+			case OP_MATH_ADC_C_A:	Math_Add_A_R(_RC_A, 1);	break;
+			case OP_MATH_ADC_D_A:	Math_Add_A_R(_RD_A, 1);	break;
+			case OP_MATH_ADC_E_A:	Math_Add_A_R(_RE_A, 1);	break;
+			case OP_MATH_ADC_H_A:	Math_Add_A_R(_RH_A, 1);	break;
+			case OP_MATH_ADC_L_A:	Math_Add_A_R(_RL_A, 1);	break;
+			case OP_MATH_ADC_N_A:	Math_Add_A_R(_RAM[_RPC + 1], 1);	break;
+			case OP_MATH_ADC_HL_A:	Math_Add_A_R(_RAM[HLasWord()], 1);	break;
+			case OP_MATH_SUB_A_A:	Math_Sub_A_R(_RA_A, 0);	break;
+			case OP_MATH_SUB_A_B:	Math_Sub_A_R(_RB_A, 0);	break;
+			case OP_MATH_SUB_A_C:	Math_Sub_A_R(_RC_A, 0);	break;
+			case OP_MATH_SUB_A_D:	Math_Sub_A_R(_RD_A, 0);	break;
+			case OP_MATH_SUB_A_E:	Math_Sub_A_R(_RE_A, 0);	break;
+			case OP_MATH_SUB_A_H:	Math_Sub_A_R(_RH_A, 0);	break;
+			case OP_MATH_SUB_A_L:	Math_Sub_A_R(_RL_A, 0);	break;
+			case OP_MATH_SUB_N_A:	Math_Sub_A_R(_RAM[_RPC + 1], 0);	break;
+			case OP_MATH_SUB_HL_A:	Math_Sub_A_R(_RAM[HLasWord()], 0);	break;
+			case OP_MATH_SBC_A_A:	Math_Sub_A_R(_RA_A, 1);	break;
+			case OP_MATH_SBC_A_B:	Math_Sub_A_R(_RB_A, 1);	break;
+			case OP_MATH_SBC_A_C:	Math_Sub_A_R(_RC_A, 1);	break;
+			case OP_MATH_SBC_A_D:	Math_Sub_A_R(_RD_A, 1);	break;
+			case OP_MATH_SBC_A_E:	Math_Sub_A_R(_RE_A, 1);	break;
+			case OP_MATH_SBC_A_H:	Math_Sub_A_R(_RH_A, 1);	break;
+			case OP_MATH_SBC_A_L:	Math_Sub_A_R(_RL_A, 1);	break;
+			case OP_MATH_SBC_N_A:	Math_Sub_A_R(_RAM[_RPC + 1], 1);	break;
+			case OP_MATH_SBC_HL_A:	Math_Sub_A_R(_RAM[HLasWord()], 1);	break;
+			case OP_MATH_AND_A_A:	Math_And_A_R(_RA_A);	break;
+			case OP_MATH_AND_A_B:	Math_And_A_R(_RB_A);	break;
+			case OP_MATH_AND_A_C:	Math_And_A_R(_RC_A);	break;
+			case OP_MATH_AND_A_D:	Math_And_A_R(_RD_A);	break;
+			case OP_MATH_AND_A_E:	Math_And_A_R(_RE_A);	break;
+			case OP_MATH_AND_A_H:	Math_And_A_R(_RH_A);	break;
+			case OP_MATH_AND_A_L:	Math_And_A_R(_RL_A);	break;
+			case OP_MATH_AND_N_A:	Math_And_A_R(_RAM[_RPC + 1]);	break;
+			case OP_MATH_AND_HL_A:	Math_And_A_R(_RAM[HLasWord()]);	break;
+			case OP_MATH_OR_A_A:	Math_Or_A_R(_RA_A);	break;
+			case OP_MATH_OR_A_B:	Math_Or_A_R(_RB_A);	break;
+			case OP_MATH_OR_A_C:	Math_Or_A_R(_RC_A);	break;
+			case OP_MATH_OR_A_D:	Math_Or_A_R(_RD_A);	break;
+			case OP_MATH_OR_A_E:	Math_Or_A_R(_RE_A);	break;
+			case OP_MATH_OR_A_H:	Math_Or_A_R(_RH_A);	break;
+			case OP_MATH_OR_A_L:	Math_Or_A_R(_RL_A);	break;
+			case OP_MATH_OR_N_A:	Math_Or_A_R(_RAM[_RPC + 1]);	break;
+			case OP_MATH_OR_HL_A:	Math_Or_A_R(_RAM[HLasWord()]);	break;
+			case OP_MATH_XOR_A_A:	Math_Xor_A_R(_RA_A);	break;
+			case OP_MATH_XOR_A_B:	Math_Xor_A_R(_RB_A);	break;
+			case OP_MATH_XOR_A_C:	Math_Xor_A_R(_RC_A);	break;
+			case OP_MATH_XOR_A_D:	Math_Xor_A_R(_RD_A);	break;
+			case OP_MATH_XOR_A_E:	Math_Xor_A_R(_RE_A);	break;
+			case OP_MATH_XOR_A_H:	Math_Xor_A_R(_RH_A);	break;
+			case OP_MATH_XOR_A_L:	Math_Xor_A_R(_RL_A);	break;
+			case OP_MATH_XOR_N_A:	Math_Xor_A_R(_RAM[_RPC + 1]);	break;
+			case OP_MATH_XOR_HL_A:	Math_Xor_A_R(_RAM[HLasWord()]);	break;
+			case OP_MATH_CP_A_A:	Math_Cp_A_R(_RA_A);	break;
+			case OP_MATH_CP_A_B:	Math_Cp_A_R(_RB_A);	break;
+			case OP_MATH_CP_A_C:	Math_Cp_A_R(_RC_A);	break;
+			case OP_MATH_CP_A_D:	Math_Cp_A_R(_RD_A);	break;
+			case OP_MATH_CP_A_E:	Math_Cp_A_R(_RE_A);	break;
+			case OP_MATH_CP_A_H:	Math_Cp_A_R(_RH_A);	break;
+			case OP_MATH_CP_A_L:	Math_Cp_A_R(_RL_A);	break;
+			case OP_MATH_CP_N_A:	Math_Cp_A_R(_RAM[_RPC + 1]); break;
+			case OP_MATH_CP_HL_A:	Math_Cp_A_R(_RAM[HLasWord()]);	break;
+			case OP_MATH_INC_A_A:	_RA_A = Math_Inc_Byte(_RA_A);	break;
+			case OP_MATH_INC_A_B:	_RB_A = Math_Inc_Byte(_RB_A);	break;
+			case OP_MATH_INC_A_C:	_RC_A = Math_Inc_Byte(_RC_A);	break;
+			case OP_MATH_INC_A_D:	_RD_A = Math_Inc_Byte(_RD_A);	break;
+			case OP_MATH_INC_A_E:	_RE_A = Math_Inc_Byte(_RE_A);	break;
+			case OP_MATH_INC_A_H:	_RH_A = Math_Inc_Byte(_RH_A);	break;
+			case OP_MATH_INC_A_L:	_RL_A = Math_Inc_Byte(_RL_A);	break;
+			case OP_MATH_INC_HL_A:	_RAM[HLasWord()] = Math_Inc_Byte(_RAM[HLasWord()]);	break;
+			case OP_MATH_DEC_A_A:	_RA_A = Math_Dec_Byte(_RA_A);	break;
+			case OP_MATH_DEC_A_B:	_RB_A = Math_Dec_Byte(_RB_A);	break;
+			case OP_MATH_DEC_A_C:	_RC_A = Math_Dec_Byte(_RC_A);	break;
+			case OP_MATH_DEC_A_D:	_RD_A = Math_Dec_Byte(_RD_A);	break;
+			case OP_MATH_DEC_A_E:	_RE_A = Math_Dec_Byte(_RE_A);	break;
+			case OP_MATH_DEC_A_H:	_RH_A = Math_Dec_Byte(_RH_A);	break;
+			case OP_MATH_DEC_A_L:	_RL_A = Math_Dec_Byte(_RL_A);	break;
+			case OP_MATH_DEC_HL_A:	_RAM[HLasWord()] = Math_Dec_Byte(_RAM[HLasWord()]);		break;
 			case OP_CPL:
 			{
 				_RA_A = ~_RA_A;
@@ -1285,24 +895,11 @@ int main()
 				_IFF2 = 0;
 			}
 			break;
-			case OP_EI:
-			{
-				_IFF1 = 1;
-				_IFF2 = 1;
-			}
-			break;
-			case OP_MATH_ADD_BC_HL:
-				Math_Add_SS_HL(BCasWord(), 0);
-				break;
-			case OP_MATH_ADD_DE_HL:
-				Math_Add_SS_HL(DEasWord(), 0);
-				break;
-			case OP_MATH_ADD_HL_HL:
-				Math_Add_SS_HL(HLasWord(), 0);
-				break;
-			case OP_MATH_ADD_SP_HL:
-				Math_Add_SS_HL(_RSP, 0);
-				break;
+			case OP_EI:	_IFF1 = 1;	_IFF2 = 1;	break;
+			case OP_MATH_ADD_BC_HL:	Math_Add_SS_HL(BCasWord(), 0);	break;
+			case OP_MATH_ADD_DE_HL:	Math_Add_SS_HL(DEasWord(), 0);	break;
+			case OP_MATH_ADD_HL_HL:	Math_Add_SS_HL(HLasWord(), 0);	break;
+			case OP_MATH_ADD_SP_HL:	Math_Add_SS_HL(_RSP, 0);		break;
 			case OP_MATH_INC_BC:
 			{
 				word newValue = BCasWord() + 1;
@@ -1580,12 +1177,8 @@ int main()
 				}
 			}
 			break;
-			case OP_SK_JR_E:
-				_RPC += (signed char) _RAM[_RPC + 1];
-				break;
-			case OP_SK_JR_Z:
-				if (GetFlag(FLAG_Z) != 0)_RPC += (signed char) _RAM[_RPC + 1];
-				break;
+			case OP_SK_JR_E: _RPC += (signed char) _RAM[_RPC + 1];	break;
+			case OP_SK_JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += (signed char) _RAM[_RPC + 1];	break;
 			case OP_SK_DJNZ:
 			{
 				_RB_A--;
@@ -1597,27 +1190,13 @@ int main()
 				opcost = 2;
 				switch (_RAM[_RPC + 1])
 				{
-					case OP_RAS_RL_A:
-						_RA_A = RAS_RL(_RA_A);
-						break;
-					case OP_RAS_RL_B:
-						_RB_A = RAS_RL(_RB_A);
-						break;
-					case OP_RAS_RL_C:
-						_RC_A = RAS_RL(_RC_A);
-						break;
-					case OP_RAS_RL_D:
-						_RD_A = RAS_RL(_RD_A);
-						break;
-					case OP_RAS_RL_E:
-						_RE_A = RAS_RL(_RE_A);
-						break;
-					case OP_RAS_RL_H:
-						_RH_A = RAS_RL(_RH_A);
-						break;
-					case OP_RAS_RL_L:
-						_RL_A = RAS_RL(_RL_A);
-						break;
+					case OP_RAS_RL_A:	_RA_A = RAS_RL(_RA_A);	break;
+					case OP_RAS_RL_B:	_RB_A = RAS_RL(_RB_A);	break;
+					case OP_RAS_RL_C:	_RC_A = RAS_RL(_RC_A);	break;
+					case OP_RAS_RL_D:	_RD_A = RAS_RL(_RD_A);	break;
+					case OP_RAS_RL_E:	_RE_A = RAS_RL(_RE_A);	break;
+					case OP_RAS_RL_H:	_RH_A = RAS_RL(_RH_A);	break;
+					case OP_RAS_RL_L:	_RL_A = RAS_RL(_RL_A);	break;
 					default:
 					{
 						printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);
@@ -1660,7 +1239,8 @@ int main()
 		_RPC += opcost;
 	}
 	printf("STOPPED\n");
-	PostTest();
+	PrintStatus(0, 0);
+	SaveRamToFile("out.bin");
 	getchar();
 	return 0;
 }

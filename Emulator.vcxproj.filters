@@ -40,9 +40,6 @@
     <ClInclude Include="CounterStep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OP_Stack.h">
       <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
