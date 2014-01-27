@@ -1,5 +1,6 @@
 #pragma once
 #include "Types.h"
+#include <stdio.h>
 
 #define RAMLENGTH 65536
 
@@ -33,5 +34,21 @@ word ReadWordAtAddress(word address)
 byte ReadByteAtAddress(word address)
 {
 	return _RAM[address];
+}
+
+void SaveRamToFile(char * filename)
+{
+	FILE * f;
+	fopen_s(&f, filename, "wb");
+	fwrite(_RAM, 1, RAMLENGTH, f);
+	fclose(f);
+}
+
+void LoadRomFromFile(char * filename)
+{
+	FILE * f;
+	fopen_s(&f,filename, "rb");
+	fread(_RAM, RAMLENGTH, 1, f);
+	fclose(f);
 }
 
