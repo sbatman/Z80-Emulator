@@ -1,9 +1,9 @@
-Emulator
+Z80 Emulator
 =======
 
 Description
 --------
-This is an emulator written for the Z80 processor in C
+This is an emulator written for the Z80 processor in C++ supporting both x86 and x64 execution environments
 
 Team
 --------
