@@ -162,9 +162,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="Math.cpp" />
@@ -189,6 +186,9 @@
     <ClInclude Include="Registers.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

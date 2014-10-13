@@ -2,7 +2,7 @@
 #include "Types.h"
 #include "Registers.h"
 
-//Main Registers
+//Bank 1 Registers
 byte _RA_A = 0;
 byte _RB_A = 0;
 byte _RD_A = 0;
@@ -13,7 +13,7 @@ byte _RC_A = 0;
 byte _RE_A = 0;
 byte _RL_A = 0;
 
-//Alternate Registers
+//Bank 2 Registers
 byte _RA_B = 0;
 byte _RB_B = 0;
 byte _RD_B = 0;
@@ -39,8 +39,10 @@ byte _InterruptMode = 0;
 
 byte _ParityLookupTable[255];
 
-
-// Thanks to the following line for the speed of this one : http://www-graphics.stanford.edu/~seander/bithacks.html#ParityParallel
+///	<summary>
+/// Prepares the parity lookup table
+/// Thanks to the following link for the speed of this one : http://www-graphics.stanford.edu/~seander/bithacks.html#ParityParallel
+///	</summary>
 void BuildPairtyLookupTable()
 {
 	for (uint32_t x = 0; x < MAXBYTE; x++)
@@ -52,6 +54,9 @@ void BuildPairtyLookupTable()
 	}
 }
 
+///	<summary>
+/// Sets all of the registers to their intended initial values
+///	</summary>
 void ZeroRegisters()
 {
 	_InterruptMode = 0;
@@ -79,26 +84,41 @@ void ZeroRegisters()
 	_RPC = 0;
 }
 
+///	<summary>
+/// Returns the registers b and c as a combined word
+///	</summary>
 word BCasWord()
 {
 	return _RB_A << BYTEWIDTH | _RC_A;
 }
 
+///	<summary>
+/// Returns the registers a and f as a combined word
+///	</summary>
 word AFasWord()
 {
 	return _RA_A << BYTEWIDTH | _RF_A;
 }
 
+///	<summary>
+/// Returns the registers d and e as a combined word
+///	</summary>
 word DEasWord()
 {
 	return _RD_A << BYTEWIDTH | _RE_A;
 }
 
+///	<summary>
+/// Returns the registers h and l as a combined word
+///	</summary>
 word HLasWord()
 {
 	return _RH_A << BYTEWIDTH | _RL_A;
 }
 
+///	<summary>
+/// Decrements the registers (bc treated as a word)
+///	</summary>
 void DecrementBC()
 {
 	word currentvalue = BCasWord();
@@ -107,6 +127,9 @@ void DecrementBC()
 	_RC_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Decrements the registers (hl treated as a word)
+///	</summary>
 void DecrementHL()
 {
 	word currentvalue = HLasWord();
@@ -115,6 +138,9 @@ void DecrementHL()
 	_RL_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Decrements the registers (de treated as a word)
+///	</summary>
 void DecrementDE()
 {
 	word currentvalue = DEasWord();
@@ -123,6 +149,9 @@ void DecrementDE()
 	_RE_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Increment the registers (bc treated as a word)
+///	</summary>
 void IncrementBC()
 {
 	word currentvalue = BCasWord();
@@ -131,6 +160,9 @@ void IncrementBC()
 	_RC_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Increment the registers (hl treated as a word)
+///	</summary>
 void IncrementHL()
 {
 	word currentvalue = HLasWord();
@@ -139,6 +171,9 @@ void IncrementHL()
 	_RL_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Increment the registers (de treated as a word)
+///	</summary>
 void IncrementDE()
 {
 	word currentvalue = DEasWord();
@@ -147,11 +182,17 @@ void IncrementDE()
 	_RE_A = currentvalue & MAXBYTE;
 }
 
+///	<summary>
+/// Sets the specified flag to the provided state
+///	</summary>
 void SetFlag(bool value, byte flag)
 {
 	if (value)	_RF_A |= flag;	else _RF_A &= ~flag;
 }
 
+///	<summary>
+/// Returns the specified flags state
+///	</summary>
 bool GetFlag(byte flag)
 {
 	return (_RF_A & flag) != 0;

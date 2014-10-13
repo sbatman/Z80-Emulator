@@ -1,3 +1,18 @@
+//-------------------------------
+//         --Z80 Emulator--
+//
+// Created by : Steven Batchelor-Manning
+//
+// Licence : This work is covered under the Creative Commons 
+// Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) licence
+//		
+// Source : https://github.com/sbatman/Z80-Emulator
+//
+// Notes : Not all extended instructions have yet been complete
+//         Interrupt support has not been implemented
+//
+//-------------------------------
+
 #include "Types.h"
 #include "Registers.h"
 #include "Ram.h"
@@ -10,6 +25,9 @@
 #include <stdlib.h> 
 #include <time.h>
 
+///	<summary>
+/// Initialises the emulator, zeroing th registers and ram, this also prepares some reference tables
+///	</summary>
 void Init()
 {
 	printf("INIT\n");
@@ -19,6 +37,9 @@ void Init()
 	InitCounterStep();
 }
 
+///	<summary>
+/// Prints the current status of the enulator
+///	</summary>
 void PrintStatus(const byte currentOpcode, const  double ips)
 {
 	printf("IPS: %f\n", ips);
@@ -40,18 +61,28 @@ void PrintStatus(const byte currentOpcode, const  double ips)
 	printf("F_C%*i\n", BYTEWIDTH, GetFlag(FLAG_C));
 }
 
+///	<summary>
+/// Jumps to the address provided
+///	</summary>
 void JumpToAddress(const byte h, const byte l)
 {
 	uint32_t position = h << BYTEWIDTH | l;
 	_RPC = position;
 }
 
+///	<summary>
+/// Jumps to the address stored in the provided address
+///	</summary>
 void JumpToAddressAtAddress(const byte h, const  byte l)
 {
 	uint32_t position = h << BYTEWIDTH | l;
 	_RPC = _RAM[position];
 }
 
+
+///	<summary>
+///	Program entry point
+///	</summary>
 uint32_t main()
 {
 	uint64_t startTime = clock() - 1;
@@ -62,21 +93,29 @@ uint32_t main()
 	LoadRomFromFile("Roms/TestGraphicsMemory.bin");
 	while (true)
 	{
+	
 		uint32_t next = _RAM[_RPC];
-		if (DrawConsoleUpdate > 1000000)
+		if (DrawConsoleUpdate > 1)
 		{
 			DrawConsoleUpdate = 0;
+
 #ifdef _WIN32
 			system("cls");
 #else
 			system("clear");
 #endif
+
 			float ips = Instructions / static_cast<float>(((clock() - startTime) / CLOCKS_PER_SEC));
 			PrintStatus(next, ips);
 		}
 		uint32_t opcost = CounterStep[next];
 		Instructions++;
 		DrawConsoleUpdate++;
+
+		//The following isnt elegant, but case statements over a limited rage are covered by the compiler
+		//to a jump tabble. Long story short, this is one of the quickest way's I have found for interpreting
+		//the instruction and executing it
+
 		switch (next)
 		{
 			case OP_NOP:				break;
