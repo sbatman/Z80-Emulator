@@ -1,3 +1,4 @@
+#include "Types.h"
 #include "Registers.h"
 #include "Ram.h"
 #include "Opcodes.h"
@@ -6,6 +7,7 @@
 #include "RAS.h"
 #include "Stack.h"
 #include <stdio.h>
+#include <stdlib.h> 
 #include <time.h>
 
 void Init()
@@ -23,34 +25,34 @@ void PrintStatus(byte currentOpcode, double ips)
 	printf("Current Addresss : %x \n", _RPC);
 	printf("Current OpCode : %x \n", currentOpcode);
 	printf("Current Stack Pointer : %x \n", _RSP);
-	printf("_A%*x\n", 8, _RA_A);
-	printf("_B%*x\n", 8, _RB_A);
-	printf("_C%*x\n", 8, _RC_A);
-	printf("_D%*x\n", 8, _RD_A);
-	printf("_E%*x\n", 8, _RE_A);
-	printf("_H%*x\n", 8, _RH_A);
-	printf("_L%*x\n\n", 8, _RL_A);
-	printf("F_S%*i\n", 8, GetFlag(FLAG_S));
-	printf("F_Z%*i\n", 8, GetFlag(FLAG_Z));
-	printf("F_H%*i\n", 8, GetFlag(FLAG_H));
-	printf("F_P%*i\n", 8, GetFlag(FLAG_P));
-	printf("F_N%*i\n", 8, GetFlag(FLAG_N));
-	printf("F_C%*i\n", 8, GetFlag(FLAG_C));
+	printf("_A%*x\n", BYTEWIDTH, _RA_A);
+	printf("_B%*x\n", BYTEWIDTH, _RB_A);
+	printf("_C%*x\n", BYTEWIDTH, _RC_A);
+	printf("_D%*x\n", BYTEWIDTH, _RD_A);
+	printf("_E%*x\n", BYTEWIDTH, _RE_A);
+	printf("_H%*x\n", BYTEWIDTH, _RH_A);
+	printf("_L%*x\n\n", BYTEWIDTH, _RL_A);
+	printf("F_S%*i\n", BYTEWIDTH, GetFlag(FLAG_S));
+	printf("F_Z%*i\n", BYTEWIDTH, GetFlag(FLAG_Z));
+	printf("F_H%*i\n", BYTEWIDTH, GetFlag(FLAG_H));
+	printf("F_P%*i\n", BYTEWIDTH, GetFlag(FLAG_P));
+	printf("F_N%*i\n", BYTEWIDTH, GetFlag(FLAG_N));
+	printf("F_C%*i\n", BYTEWIDTH, GetFlag(FLAG_C));
 }
 
 void JumpToAddress(byte h, byte l)
 {
-	int position = h << 8 | l;
+	uint32_t position = h << BYTEWIDTH | l;
 	_RPC = position;
 }
 
 void JumpToAddressAtAddress(byte h, byte l)
 {
-	int position = h << 8 | l;
+	uint32_t position = h << BYTEWIDTH | l;
 	_RPC = _RAM[position];
 }
 
-int main()
+uint32_t main()
 {
 	long long startTime = clock() - 1;
 	long long Instructions = 0;
@@ -58,10 +60,10 @@ int main()
 	Init();
 	printf("START\n");
 	LoadRomFromFile("Roms/TestGraphicsMemory.bin");
-	for (;;)
+	while (true)
 	{
-		int next = _RAM[_RPC];
-		if (DrawConsoleUpdate > 100000)
+		uint32_t next = _RAM[_RPC];
+		if (DrawConsoleUpdate > 1000000)
 		{
 			DrawConsoleUpdate = 0;
 #ifdef _WIN32
@@ -69,10 +71,10 @@ int main()
 #else
 			system("clear");
 #endif
-			float ips = Instructions / (float) (((clock() - startTime) / CLOCKS_PER_SEC));
+			float ips = Instructions / static_cast<float>(((clock() - startTime) / CLOCKS_PER_SEC));
 			PrintStatus(next, ips);
 		}
-		int opcost = CounterStep[next];
+		uint32_t opcost = CounterStep[next];
 		Instructions++;
 		DrawConsoleUpdate++;
 		switch (next)
@@ -164,16 +166,16 @@ int main()
 					case OP_LD_NN_HL:_RIX = ReadWordAtAddress(_RPC + 2);	opcost = 4;	break;
 					case OP_LD_NN_HL_M:
 					{
-						int position = ReadWordAtAddress(_RPC + 2);
-						_RIX = _RAM[position + 1] << 8 | _RAM[position];
+						uint32_t position = ReadWordAtAddress(_RPC + 2);
+						_RIX = _RAM[position + 1] << BYTEWIDTH | _RAM[position];
 						opcost = 4;
 					}
 					break;
 					case OP_LD_HL_NN:
 					{
-						int position = ReadWordAtAddress(_RPC + 2);
-						_RAM[position] = (_RIX >> (8 * 1)) & 0xff;
-						_RAM[position + 1] = (_RIX >> (8 * 0)) & 0xff;
+						uint32_t position = ReadWordAtAddress(_RPC + 2);
+						_RAM[position] = (_RIX >> BYTEWIDTH) & MAXBYTE;
+						_RAM[position + 1] = (_RIX) & MAXBYTE;
 						opcost = 4;
 					}
 					break;
@@ -191,7 +193,7 @@ int main()
 					break;
 					case OP_SK_POP_HL:
 					{
-						Stack_Pop_Word(_RIX);
+						_RIX=Stack_Pop_Word();
 						opcost = 2;
 					}
 					break;
@@ -322,22 +324,22 @@ int main()
 					break;
 					case OP_LD_NN_HL:
 					{
-						_RIY = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
+						_RIY = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
 						opcost = 4;
 					}
 					break;
 					case OP_LD_NN_HL_M:
 					{
-						int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-						_RIY = _RAM[position + 1] << 8 | _RAM[position];
+						uint32_t position = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
+						_RIY = _RAM[position + 1] << BYTEWIDTH | _RAM[position];
 						opcost = 4;
 					}
 					break;
 					case OP_LD_HL_NN:
 					{
-						int position = _RAM[_RPC + 3] << 8 | _RAM[_RPC + 2];
-						_RAM[position] = (_RIY >> (8 * 1)) & 0xff;
-						_RAM[position + 1] = (_RIY >> (8 * 0)) & 0xff;
+						uint32_t position = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
+						_RAM[position] = (_RIY >> BYTEWIDTH) & MAXBYTE;
+						_RAM[position + 1] = (_RIY) & MAXBYTE;
 						opcost = 4;
 					}
 					break;
@@ -471,7 +473,7 @@ int main()
 						break;
 					case OP_LD_NN_DD_BC:
 					{
-						int position = ReadWordAtAddress(_RPC + 2);
+						uint32_t position = ReadWordAtAddress(_RPC + 2);
 						_RB_A = _RAM[position + 1];
 						_RC_A = _RAM[position];
 						opcost = 4;
@@ -479,7 +481,7 @@ int main()
 					break;
 					case OP_LD_NN_DD_DE:
 					{
-						int position = ReadWordAtAddress(_RPC + 2);
+						uint32_t position = ReadWordAtAddress(_RPC + 2);
 						_RD_A = _RAM[position + 1];
 						_RE_A = _RAM[position];
 						opcost = 4;
@@ -487,7 +489,7 @@ int main()
 					break;
 					case OP_LD_NN_DD_HL:
 					{
-						int position = ReadWordAtAddress(_RPC + 2);
+						uint32_t position = ReadWordAtAddress(_RPC + 2);
 						_RH_A = _RAM[position + 1];
 						_RL_A = _RAM[position];
 						opcost = 4;
@@ -537,7 +539,7 @@ int main()
 					break;
 					case OP_ETS_LDIR:
 					{
-						int iterations = BCasWord();
+						uint32_t iterations = BCasWord();
 						if (iterations == 0)iterations = 64;
 						while (iterations != 0)
 						{
@@ -678,14 +680,14 @@ int main()
 				break;
 			case OP_LD_NN_HL_M:
 			{
-				int position = ReadWordAtAddress(_RPC + 1);
+				uint32_t position = ReadWordAtAddress(_RPC + 1);
 				_RH_A = _RAM[position + 1];
 				_RL_A = _RAM[position];
 			}
 			break;
 			case OP_LD_HL_NN:
 			{
-				int position = ReadWordAtAddress(_RPC + 1);
+				uint32_t position = ReadWordAtAddress(_RPC + 1);
 				_RAM[position] = _RL_A;
 				_RAM[position + 1] = _RH_A;
 			}
@@ -903,22 +905,22 @@ int main()
 			case OP_MATH_INC_BC:
 			{
 				word newValue = BCasWord() + 1;
-				_RB_A = (newValue >> (8 * 1)) & 0xff;
-				_RC_A = (newValue >> (8 * 0)) & 0xff;
+				_RB_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RC_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_INC_DE:
 			{
 				word newValue = DEasWord() + 1;
-				_RD_A = (newValue >> (8 * 1)) & 0xff;
-				_RE_A = (newValue >> (8 * 0)) & 0xff;
+				_RD_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RE_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_INC_HL:
 			{
 				word newValue = HLasWord() + 1;
-				_RH_A = (newValue >> (8 * 1)) & 0xff;
-				_RL_A = (newValue >> (8 * 0)) & 0xff;
+				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RL_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_INC_SP:
@@ -927,22 +929,22 @@ int main()
 			case OP_MATH_DEC_BC:
 			{
 				word newValue = BCasWord() - 1;
-				_RB_A = (newValue >> (8 * 1)) & 0xff;
-				_RC_A = (newValue >> (8 * 0)) & 0xff;
+				_RB_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RC_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_DEC_DE:
 			{
 				word newValue = DEasWord() - 1;
-				_RD_A = (newValue >> (8 * 1)) & 0xff;
-				_RE_A = (newValue >> (8 * 0)) & 0xff;
+				_RD_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RE_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_DEC_HL:
 			{
 				word newValue = HLasWord() - 1;
-				_RH_A = (newValue >> (8 * 1)) & 0xff;
-				_RL_A = (newValue >> (8 * 0)) & 0xff;
+				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
+				_RL_A = (newValue) & MAXBYTE;
 			}
 			break;
 			case OP_MATH_DEC_SP:
@@ -1153,8 +1155,8 @@ int main()
 			break;
 			case OP_RAS_RLCA:
 			{
-				int hbit = (_RA_A & 0x80) != 0;
-				_RA_A = _RA_A << 1;
+				uint32_t hbit = (_RA_A & 0x80) != 0;
+				_RA_A = ((_RA_A << 1) & MAXBYTE);
 				if (hbit)_RA_A |= 0x01;
 			}
 			break;
@@ -1177,12 +1179,12 @@ int main()
 				}
 			}
 			break;
-			case OP_SK_JR_E: _RPC += (signed char) _RAM[_RPC + 1];	break;
-			case OP_SK_JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += (signed char) _RAM[_RPC + 1];	break;
+			case OP_SK_JR_E: _RPC += static_cast<signed char>(_RAM[_RPC + 1]);	break;
+			case OP_SK_JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += static_cast<signed char>(_RAM[_RPC + 1]);	break;
 			case OP_SK_DJNZ:
 			{
 				_RB_A--;
-				if (_RB_A != 0) _RPC += (signed char) _RAM[_RPC + 1];
+				if (_RB_A != 0) _RPC += static_cast<signed char>(_RAM[_RPC + 1]);
 			}
 			break;
 			case OP_RAS_CB:
@@ -1208,14 +1210,14 @@ int main()
 			{
 				SetFlag((_RA_A & 0x01) != 0, FLAG_C);
 				_RA_A >>= 1;
-				_RA_A |= (byte) (GetFlag(FLAG_C) << 7);
+				_RA_A |= static_cast<byte>(GetFlag(FLAG_C) << 7);
 				SetFlag(0, FLAG_H);
 				SetFlag(0, FLAG_N);
 			}
 			break;
 			case OP_RAS_RRA:
 			{
-				int currentCFlag = GetFlag(FLAG_C);
+				uint32_t currentCFlag = GetFlag(FLAG_C);
 				SetFlag((_RA_A & 0x01), FLAG_C);
 				_RA_A >>= 1;
 				_RA_A |= (currentCFlag << 7);

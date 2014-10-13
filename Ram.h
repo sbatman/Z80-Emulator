@@ -4,51 +4,19 @@
 
 #define RAMLENGTH 65536
 
-byte _RAM[RAMLENGTH];
+extern byte _RAM [];
 
-void ZeroRam()
-{
-	for (int i = 0; i < RAMLENGTH; i++) _RAM[i] = 0;
-}
+void ZeroRam();
 
-void WriteWordAtAddress(word address, word wordToWrite)
-{
-	_RAM[address] = (wordToWrite >> (8 * 0)) & 0xff;
-	_RAM[address + 1] = (wordToWrite >> (8 * 1)) & 0xff;
-}
-void WriteByteAtAddress(word address, byte byteToWrite)
-{
-	_RAM[address] = byteToWrite;
-}
+void WriteWordAtAddress(const word address, const word wordToWrite);
+void WriteByteAtAddress(const word address, const byte byteToWrite);
 
-word BytesToWord(byte H, byte L)
-{
-	return H << 8 | L;
-}
+word BytesToWord(const byte H, const byte L);
 
-word ReadWordAtAddress(word address)
-{
-	return BytesToWord(_RAM[address + 1], _RAM[address ]);
-}
+word ReadWordAtAddress(const word address);
 
-byte ReadByteAtAddress(word address)
-{
-	return _RAM[address];
-}
+byte ReadByteAtAddress(const word address);
 
-void SaveRamToFile(char * filename)
-{
-	FILE * f;
-	fopen_s(&f, filename, "wb");
-	fwrite(_RAM, 1, RAMLENGTH, f);
-	fclose(f);
-}
+void SaveRamToFile(const char * filename);
 
-void LoadRomFromFile(char * filename)
-{
-	FILE * f;
-	fopen_s(&f,filename, "rb");
-	fread(_RAM, RAMLENGTH, 1, f);
-	fclose(f);
-}
-
+void LoadRomFromFile(const char * filename);

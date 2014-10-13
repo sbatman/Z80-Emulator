@@ -8,7 +8,7 @@
 #define OP_RST_20H 0xE7
 #define OP_RST_28H 0xEF
 #define OP_RST_30H 0xF7
-#define OP_RST_38H 0xFF
+#define OP_RST_38H MAXBYTE
 
 #define OP_RET 0xC9
 #define OP_RET_NZ 0xC0
