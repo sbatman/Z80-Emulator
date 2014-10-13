@@ -29,32 +29,11 @@
     <ClInclude Include="Opcodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OP_LD.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
-    <ClInclude Include="OP_Stack.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
-    <ClInclude Include="OP_ETS.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
-    <ClInclude Include="OP_Math.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Header Files\Functions</Filter>
     </ClInclude>
-    <ClInclude Include="OP_CR.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
     <ClInclude Include="Stack.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OP_RaS.h">
-      <Filter>Header Files\Opcodes</Filter>
-    </ClInclude>
-    <ClInclude Include="OP_IO.h">
-      <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
     <ClInclude Include="RAS.h">
       <Filter>Header Files\Functions</Filter>
@@ -62,9 +41,6 @@
     <ClInclude Include="Counter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Emulator.cpp">
@@ -88,5 +64,8 @@
     <ClCompile Include="Counter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.md" />
   </ItemGroup>
 </Project>
