@@ -2,7 +2,7 @@
 #include "Registers.h"
 #include "Ram.h"
 #include "Opcodes.h"
-#include "CounterStep.h"
+#include "Counter.h"
 #include "Math.h"
 #include "RAS.h"
 #include "Stack.h"
@@ -1164,7 +1164,7 @@ uint32_t main()
 			{
 				if (GetFlag(FLAG_C) != 0)
 				{
-					signed char jump = _RAM[_RPC + 1];
+					int8_t jump = _RAM[_RPC + 1];
 					_RPC += jump;
 					opcost = 0;
 				}
@@ -1173,18 +1173,18 @@ uint32_t main()
 			{
 				if (GetFlag(FLAG_C) == 0)
 				{
-					signed char jump = _RAM[_RPC + 1];
+					int8_t jump = _RAM[_RPC + 1];
 					_RPC += jump;
 					opcost = 2;
 				}
 			}
 			break;
-			case OP_SK_JR_E: _RPC += static_cast<signed char>(_RAM[_RPC + 1]);	break;
-			case OP_SK_JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += static_cast<signed char>(_RAM[_RPC + 1]);	break;
+			case OP_SK_JR_E: _RPC += static_cast<int8_t>(_RAM[_RPC + 1]);	break;
+			case OP_SK_JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += static_cast<int8_t>(_RAM[_RPC + 1]);	break;
 			case OP_SK_DJNZ:
 			{
 				_RB_A--;
-				if (_RB_A != 0) _RPC += static_cast<signed char>(_RAM[_RPC + 1]);
+				if (_RB_A != 0) _RPC += static_cast<int8_t>(_RAM[_RPC + 1]);
 			}
 			break;
 			case OP_RAS_CB:

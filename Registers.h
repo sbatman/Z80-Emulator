@@ -1,13 +1,13 @@
 #pragma once
 #include "Types.h"
 
-#define FLAG_S 0x80
-#define FLAG_Z 0x40
-#define FLAG_H 0x10
-#define FLAG_P 0x04
-#define FLAG_V 0x04
-#define FLAG_N 0x02
-#define FLAG_C 0x01
+static const byte FLAG_S = 0x80;
+static const byte FLAG_Z = 0x40;
+static const byte FLAG_H = 0x10;
+static const byte FLAG_P = 0x04;
+static const byte FLAG_V = 0x04;
+static const byte FLAG_N = 0x02;
+static const byte FLAG_C = 0x01;
 
 //Main Registers
 extern byte _RA_A;

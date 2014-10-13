@@ -1,14 +1,11 @@
-#pragma once
-#include "Opcodes.h"
-
-#define MAXOPCODE 255
+#include "Counter.h"
 
 uint32_t CounterStep[255];
 
 void InitCounterStep()
 {
-	for (uint32_t i = 0; i < MAXOPCODE; i++)
-		CounterStep[i] = 1;
+	for (uint8_t i = 0; i < MAXBYTE; i++) CounterStep[i] = 1;
+
 	CounterStep[OP_LD_N_A] = 2;
 	CounterStep[OP_LD_N_B] = 2;
 	CounterStep[OP_LD_N_C] = 2;
@@ -25,7 +22,7 @@ void InitCounterStep()
 	CounterStep[OP_LD_NN_HL] = 3;
 	CounterStep[OP_LD_NN_SP] = 3;
 	CounterStep[OP_LD_NN_HL_M] = 3;
-	CounterStep[OP_LD_A_NN]=3;
+	CounterStep[OP_LD_A_NN] = 3;
 	CounterStep[OP_LD_HL_NN] = 3;
 	CounterStep[OP_MATH_ADD_N_A] = 2;
 	CounterStep[OP_MATH_ADC_N_A] = 2;
@@ -52,5 +49,5 @@ void InitCounterStep()
 	CounterStep[OP_IO_OUT_NA] = 2;
 	CounterStep[OP_SK_JR_NC_E] = 2;
 	CounterStep[OP_SK_JP] = 0;
-	CounterStep[OP_SK_DJNZ]=2;
+	CounterStep[OP_SK_DJNZ] = 2;
 }

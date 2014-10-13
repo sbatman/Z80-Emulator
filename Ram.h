@@ -2,13 +2,14 @@
 #include "Types.h"
 #include <stdio.h>
 
-#define RAMLENGTH 65536
+static const int RAMLENGTH = 65536;
 
 extern byte _RAM [];
 
 void ZeroRam();
 
 void WriteWordAtAddress(const word address, const word wordToWrite);
+
 void WriteByteAtAddress(const word address, const byte byteToWrite);
 
 word BytesToWord(const byte H, const byte L);

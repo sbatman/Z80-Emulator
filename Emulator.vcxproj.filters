@@ -32,9 +32,6 @@
     <ClInclude Include="OP_LD.h">
       <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
-    <ClInclude Include="CounterStep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OP_Stack.h">
       <Filter>Header Files\Opcodes</Filter>
     </ClInclude>
@@ -62,6 +59,9 @@
     <ClInclude Include="RAS.h">
       <Filter>Header Files\Functions</Filter>
     </ClInclude>
+    <ClInclude Include="Counter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -80,6 +80,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Stack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RAS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Counter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

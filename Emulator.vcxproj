@@ -165,14 +165,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Ram.cpp" />
+    <ClCompile Include="RAS.cpp" />
     <ClCompile Include="Registers.cpp" />
     <ClCompile Include="Stack.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CounterStep.h" />
+    <ClInclude Include="Counter.h" />
     <ClInclude Include="OP_IO.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Opcodes.h" />
