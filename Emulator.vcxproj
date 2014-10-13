@@ -51,7 +51,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -86,7 +87,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Emulator.c" />
+    <ClCompile Include="Emulator.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Ram.cpp" />
+    <ClCompile Include="Registers.cpp" />
+    <ClCompile Include="Stack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CounterStep.h" />

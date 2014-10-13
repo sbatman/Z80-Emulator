@@ -3,11 +3,11 @@
 
 #define MAXOPCODE 255
 
-int CounterStep[255];
+uint32_t CounterStep[255];
 
 void InitCounterStep()
 {
-	for (int i = 0; i < MAXOPCODE; i++)
+	for (uint32_t i = 0; i < MAXOPCODE; i++)
 		CounterStep[i] = 1;
 	CounterStep[OP_LD_N_A] = 2;
 	CounterStep[OP_LD_N_B] = 2;

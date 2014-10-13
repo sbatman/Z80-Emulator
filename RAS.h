@@ -4,13 +4,13 @@
 
 byte RAS_RL(byte value)
 {
-	bool carrySet = GetFlag(FLAG_C);
+	bool carrySet = GetFlag(FLAG_C) != 0;
 	SetFlag((value & 0x80) != 0, FLAG_C);
 	value <<= 1;
-	value |= (byte) carrySet;
+	value |= static_cast<byte>(carrySet);
 	SetFlag(0, FLAG_H);
 	SetFlag(0, FLAG_N);
-	SetFlag(_ParityLookupTable[value], FLAG_P);
+	SetFlag(_ParityLookupTable[value] != 0, FLAG_P);
 	return value;
 }
 
