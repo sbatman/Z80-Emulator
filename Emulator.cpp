@@ -59,6 +59,29 @@ void PrintStatus(const byte currentOpcode, const  double ips)
 	printf("F_P%*i\n", BYTEWIDTH, GetFlag(FLAG_P));
 	printf("F_N%*i\n", BYTEWIDTH, GetFlag(FLAG_N));
 	printf("F_C%*i\n", BYTEWIDTH, GetFlag(FLAG_C));
+	int newline = 6;
+
+	for (int y = 0; y < 35; y++)
+	{
+		for (int x = 0; x < 256; x += 8)
+		{
+			int newy = y;
+			word ramposition = 0x4000;
+			word yp1 = (newy << 5)& 0x1800;
+			newy = y;
+			word yp2 = yp1 | ((newy << 2) & 0xE0);
+			newy = y;
+			word yp3 = yp2 | ((newy << 8) & 0x700);
+			ramposition |= yp3;
+			ramposition |= (x / 8);
+			if (_RAM[ramposition] == 0x00)
+			{
+				printf("        ");
+			}
+			else{ for (int i = 0; i < 8; i++)printf((_RAM[ramposition] >> (7 - i)) & 0x01 ? "#" : " "); }
+		}
+		printf("\n");
+	}
 }
 
 ///	<summary>
