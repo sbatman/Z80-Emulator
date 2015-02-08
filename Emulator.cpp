@@ -103,6 +103,8 @@ void JumpToAddressAtAddress(const byte h, const  byte l)
 }
 
 
+bool skipper = true;
+
 ///	<summary>
 ///	Program entry point
 ///	</summary>
@@ -116,10 +118,14 @@ uint32_t main()
 	LoadRomFromFile("Roms/48.bin");
 	while (true)
 	{
-		long i = 10000000;
-		while (i > 0)i--;
+
 		uint32_t next = _RAM[_RPC];
-		//	if (DrawConsoleUpdate > 1)
+		if (_RPC == 0x128c)
+		{
+			int g = 7;
+			g = g*g;
+		}
+		if (DrawConsoleUpdate > (skipper?10000:0))
 		{
 			DrawConsoleUpdate = 0;
 
@@ -493,9 +499,22 @@ uint32_t main()
 
 					case OP_Main::OP_CBMODIFIER:
 					{
-						switch (_RAM[_RPC + 2])
+						switch (_RAM[_RPC + 3])
 						{
-
+							case OP_XX_CB::CB_BIT_0_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address);
+								SetFlag(value & (1 << 0), FLAG_Z);
+								SetFlag(value & (1 << 0), FLAG_P);
+								SetFlag(value & (1 << 0), FLAG_V);
+								SetFlag(1, FLAG_H);
+								SetFlag(0, FLAG_N);
+								SetFlag(0, FLAG_S);
+								SetFlag(GetFlag(FLAG_5)& ((value >> 5) & 0x1), FLAG_5);
+								SetFlag(GetFlag(FLAG_3)& ((value >> 3) & 0x1), FLAG_3);
+							}
+							break;
 							default:
 							{
 								printf("Unkown opcode IYCB:%i \n", _RAM[_RPC + 2]);
@@ -520,10 +539,10 @@ uint32_t main()
 			case OP_Load::N_HL:	WriteByteAtAddress(HLasWord(), _RAM[_RPC + 1]);	break;
 			case OP_Load::BC_A:	_RA_A = ReadByteAtAddress(BCasWord());	break;
 			case OP_Load::DE_A:	_RA_A = ReadByteAtAddress(DEasWord());	break;
-			case OP_Load::NN_A:	_RA_A = ReadByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1));	break;
+			case OP_Load::NN_A:	_RA_A = ReadByteAtAddress(BytesToWord(_RAM[_RPC + 2], _RAM[_RPC + 1]));	break;
 			case OP_Load::A_BC:	WriteByteAtAddress(BCasWord(), _RA_A);	break;
 			case OP_Load::A_DE:	WriteByteAtAddress(DEasWord(), _RA_A);	break;
-			case OP_Load::A_NN:	WriteByteAtAddress(BytesToWord(_RPC + 2, _RPC + 1), _RA_A);	break;
+			case OP_Load::A_NN:	WriteByteAtAddress(BytesToWord(_RAM[_RPC + 2], _RAM[_RPC + 1]), _RA_A);	break;
 			case OP_Load::ED:
 			{
 				switch (_RAM[_RPC + 1])
@@ -657,7 +676,7 @@ uint32_t main()
 						SetFlag(0, FLAG_H);
 						SetFlag(0, FLAG_N);
 						opcost = 2;
-						if ((BCasWord() - 1 != 0))_RPC -= 2;
+						if ((BCasWord() != 0))_RPC -= 2;
 					}
 					break;
 					case OP_ETS::CPI:
@@ -997,7 +1016,7 @@ uint32_t main()
 			break;
 			case OP_Math::INC_HL:
 			{
-				word newValue = HLasWord() + 1;
+				word newValue =( HLasWord() + 1)&0xffff;
 				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
 				_RL_A = (newValue)& MAXBYTE;
 			}
@@ -1038,8 +1057,20 @@ uint32_t main()
 				opcost = 0;
 			}
 			break;
+			case OP_CTRRTN::CR_CALLNZ:
+			{
+				word newRPC = ReadWordAtAddress(_RAM[_RPC + 1]);
+				_RPC += 3;
+				if (!GetFlag(FLAG_Z))
+				{
+					Stack_Push_Word(_RPC);
+					_RPC = newRPC;
+					opcost = 0;
+				}
+			}
+			break;
 			case OP_Stack::JR_NZ_E:
-				if (GetFlag(FLAG_Z) == 0)	_RPC += _RAM[_RPC + 1];
+				if (GetFlag(FLAG_Z) == 0)	_RPC += (int8_t)_RAM[_RPC + 1];
 				break;
 			case OP_CTRRTN::RST_00H:
 			{

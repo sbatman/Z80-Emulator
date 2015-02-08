@@ -154,8 +154,8 @@ byte Math_Inc_Byte(byte value)
 byte Math_Dec_Byte(byte value)
 {
 	SetFlag(1, FLAG_N);
-	SetFlag((value & 0x80) && !((value + 1) & 0x80), FLAG_P);
-	value++;
+	SetFlag((value & 0x80) && !((value - 1) & 0x80), FLAG_P);
+	value--;
 	SetFlag((value & 0x0F) == 0x0F, FLAG_H);
 	SetFlag(value == 0, FLAG_Z);
 	SetFlag(((value & 0x80) != 0), FLAG_S);

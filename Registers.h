@@ -3,7 +3,9 @@
 
 static const byte FLAG_S = 0x80;
 static const byte FLAG_Z = 0x40;
+static const byte FLAG_5 = 0x20;
 static const byte FLAG_H = 0x10;
+static const byte FLAG_3 = 0x08;
 static const byte FLAG_P = 0x04;
 static const byte FLAG_V = 0x04;
 static const byte FLAG_N = 0x02;
