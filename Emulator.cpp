@@ -67,7 +67,7 @@ void PrintStatus(const byte currentOpcode, const  double ips)
 		{
 			int newy = y;
 			word ramposition = 0x4000;
-			word yp1 = (newy << 5)& 0x1800;
+			word yp1 = (newy << 5) & 0x1800;
 			newy = y;
 			word yp2 = yp1 | ((newy << 2) & 0xE0);
 			newy = y;
@@ -78,7 +78,7 @@ void PrintStatus(const byte currentOpcode, const  double ips)
 			{
 				printf("        ");
 			}
-			else{ for (int i = 0; i < 8; i++)printf((_RAM[ramposition] >> (7 - i)) & 0x01 ? "#" : " "); }
+			else { for (int i = 0; i < 8; i++)printf((_RAM[ramposition] >> (7 - i)) & 0x01 ? "#" : " "); }
 		}
 		printf("\n");
 	}
@@ -113,12 +113,13 @@ uint32_t main()
 	uint64_t DrawConsoleUpdate = 0;
 	Init();
 	printf("START\n");
-	LoadRomFromFile("Roms/TestGraphicsMemory.bin");
+	LoadRomFromFile("Roms/48.bin");
 	while (true)
 	{
-
+		long i = 10000000;
+		while (i > 0)i--;
 		uint32_t next = _RAM[_RPC];
-		if (DrawConsoleUpdate > 1000000)
+		//	if (DrawConsoleUpdate > 1)
 		{
 			DrawConsoleUpdate = 0;
 
@@ -232,105 +233,108 @@ uint32_t main()
 						_RIX = _RAM[position + 1] << BYTEWIDTH | _RAM[position];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::HL_NN:
 					{
 						uint32_t position = ReadWordAtAddress(_RPC + 2);
 						_RAM[position] = (_RIX >> BYTEWIDTH) & MAXBYTE;
-						_RAM[position + 1] = (_RIX) & MAXBYTE;
+						_RAM[position + 1] = (_RIX)& MAXBYTE;
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::HL_SP:
 					{
 						_RSP = _RIX;
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_Stack::PUSH_HL:
 					{
 						Stack_Push_Word(_RIX);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_Stack::POP_HL:
 					{
 						_RIX = Stack_Pop_Word();
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::E_HL_SP:
 					{
 						WriteWordAtAddress(_RSP, _RIX);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_Math::ADD_HL_A:
 					{
 						Math_Add_A_R(_RAM[_RIX + n], 0);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::ADC_HL_A:
 					{
 						Math_Add_A_R(_RAM[_RIX + n], 1);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::SUB_HL_A:
 					{
 						Math_Sub_A_R(_RAM[_RIX + n], 0);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::SBC_HL_A:
 					{
 						Math_Sub_A_R(_RAM[_RIX + n], 1);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::AND_HL_A:
 					{
 						Math_And_A_R(_RAM[_RIX + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::OR_HL_A:
 					{
 						Math_Or_A_R(_RAM[_RIX + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::XOR_HL_A:
 					{
 						Math_Xor_A_R(_RAM[_RIX + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::CP_HL_A:
 					{
 						Math_Cp_A_R(_RAM[_RIX + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::INC_HL_A:
 					{
 						Math_Inc_Byte(_RAM[_RIX + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::DEC_HL_A:Math_Dec_Byte(_RAM[_RIX + n]); opcost = 3; break;
 					case OP_Math::ADD_BC_IX: Math_Add_PP_IX(BCasWord(), 0); opcost = 2; break;
 					case OP_Math::ADD_DE_IX: Math_Add_PP_IX(DEasWord(), 0); opcost = 2; break;
 					case OP_Math::ADD_IX_IX:Math_Add_PP_IX(_RIX, 0); opcost = 2; break;
 					case OP_Math::ADD_SP_IX:Math_Add_PP_IX(_RSP, 0); opcost = 2; break;
+
+
+
 					default:
 					{
 						printf("Unkown opcode IX:%i \n", _RAM[_RPC + 1]);
 					}
 				}
 			}
-				break;
+			break;
 			case OP_Load::IYD_R:
 			{
 				byte n = _RAM[_RPC + 2];
@@ -383,46 +387,46 @@ uint32_t main()
 						_RAM[_RIY + n] = _RAM[_RPC + 3];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::NN_HL:
 					{
 						_RIY = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::NN_HL_M:
 					{
 						uint32_t position = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
 						_RIY = _RAM[position + 1] << BYTEWIDTH | _RAM[position];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::HL_NN:
 					{
 						uint32_t position = _RAM[_RPC + 3] << BYTEWIDTH | _RAM[_RPC + 2];
 						_RAM[position] = (_RIY >> BYTEWIDTH) & MAXBYTE;
-						_RAM[position + 1] = (_RIY) & MAXBYTE;
+						_RAM[position + 1] = (_RIY)& MAXBYTE;
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::HL_SP:
 					{
 						_RSP = _RIY;
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_Stack::PUSH_HL:
 					{
 						Stack_Push_Word(_RIY);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_Stack::POP_HL:
 					{
 						_RIY = Stack_Pop_Word();
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::E_HL_SP:
 						WriteWordAtAddress(_RSP, _RIY);
 						break;
@@ -431,68 +435,81 @@ uint32_t main()
 						Math_Add_A_R(_RAM[_RIY + n], 0);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::ADC_HL_A:
 					{
 						Math_Add_A_R(_RAM[_RIY + n], 1);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::SUB_HL_A:
 					{
 						Math_Sub_A_R(_RAM[_RIY + n], 0);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::SBC_HL_A:
 					{
 						Math_Sub_A_R(_RAM[_RIY + n], 1);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::AND_HL_A:
 					{
 						Math_And_A_R(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::OR_HL_A:
 					{
 						Math_Or_A_R(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::XOR_HL_A:
 					{
 						Math_Xor_A_R(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::CP_HL_A:
 					{
 						Math_Cp_A_R(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::INC_HL_A:
 					{
 						Math_Inc_Byte(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
 					case OP_Math::DEC_HL_A:
 					{
 						Math_Dec_Byte(_RAM[_RIY + n]);
 						opcost = 3;
 					}
-						break;
+					break;
+
+					case OP_Main::OP_CBMODIFIER:
+					{
+						switch (_RAM[_RPC + 2])
+						{
+
+							default:
+							{
+								printf("Unkown opcode IYCB:%i \n", _RAM[_RPC + 2]);
+							}
+						}
+					}
+
 					default:
 					{
 						printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
 					}
 				}
 			}
-				break;
+			break;
 			case OP_Load::A_HL:	WriteByteAtAddress(HLasWord(), _RA_A);	break;
 			case OP_Load::B_HL:	WriteByteAtAddress(HLasWord(), _RB_A);	break;
 			case OP_Load::C_HL:	WriteByteAtAddress(HLasWord(), _RC_A);	break;
@@ -540,7 +557,7 @@ uint32_t main()
 						_RC_A = _RAM[position];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::NN_DD_DE:
 					{
 						uint32_t position = ReadWordAtAddress(_RPC + 2);
@@ -548,7 +565,7 @@ uint32_t main()
 						_RE_A = _RAM[position];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::NN_DD_HL:
 					{
 						uint32_t position = ReadWordAtAddress(_RPC + 2);
@@ -556,37 +573,37 @@ uint32_t main()
 						_RL_A = _RAM[position];
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::NN_DD_SP:
 					{
 						_RSP = ReadWordAtAddress(_RPC + 2);
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::DD_NN_BC:
 					{
 						WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), BCasWord());
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::DD_NN_DE:
 					{
 						WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), DEasWord());
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::DD_NN_HL:
 					{
 						WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), HLasWord());
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_Load::DD_NN_SP:
 					{
 						WriteWordAtAddress(ReadWordAtAddress(_RPC + 2), _RSP);
 						opcost = 4;
 					}
-						break;
+					break;
 					case OP_ETS::LDI:
 					{
 						_RAM[DEasWord()] = _RAM[HLasWord()];
@@ -598,7 +615,7 @@ uint32_t main()
 						SetFlag(0, FLAG_N);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::LDIR:
 					{
 						uint32_t iterations = BCasWord();
@@ -617,7 +634,7 @@ uint32_t main()
 						SetFlag(0, FLAG_N);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::LDD:
 					{
 						_RAM[DEasWord()] = _RAM[HLasWord()];
@@ -629,7 +646,7 @@ uint32_t main()
 						SetFlag(0, FLAG_N);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::LDDR:
 					{
 						_RAM[DEasWord()] = _RAM[HLasWord()];
@@ -642,7 +659,7 @@ uint32_t main()
 						opcost = 2;
 						if ((BCasWord() - 1 != 0))_RPC -= 2;
 					}
-						break;
+					break;
 					case OP_ETS::CPI:
 					{
 						if (_RAM[HLasWord()] == _RA_A)
@@ -657,7 +674,7 @@ uint32_t main()
 						SetFlag(0, FLAG_S);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::CPIR:
 					{
 						bool condition = _RAM[HLasWord()] == _RA_A;
@@ -672,7 +689,7 @@ uint32_t main()
 						if (condition && (BCasWord() - 1 != 0))
 							_RPC -= 2;
 					}
-						break;
+					break;
 					case OP_ETS::CPD:
 					{
 						SetFlag(_RAM[HLasWord()] == _RA_A, FLAG_Z);
@@ -684,7 +701,7 @@ uint32_t main()
 						SetFlag(0, FLAG_S);
 						opcost = 2;
 					}
-						break;
+					break;
 					case OP_ETS::CPDR:
 					{
 						bool condition = _RAM[HLasWord()] == _RA_A;
@@ -699,7 +716,7 @@ uint32_t main()
 						if (condition && (BCasWord() - 1 != 0))
 							_RPC -= 2;
 					}
-						break;
+					break;
 					case OP_Main::OP_NEG:
 					{
 						byte temp = _RA_A;
@@ -707,7 +724,7 @@ uint32_t main()
 						Math_Sub_A_R(temp, 0);
 						SetFlag(1, FLAG_N);
 					}
-						break;
+					break;
 					case OP_Math::ADC_BC_HL:	Math_Add_SS_HL(BCasWord(), 1);	break;
 					case OP_Math::ADC_DE_HL:	Math_Add_SS_HL(DEasWord(), 1);	break;
 					case OP_Math::ADC_HL_HL:	Math_Add_SS_HL(HLasWord(), 1);	break;
@@ -724,7 +741,7 @@ uint32_t main()
 					}
 				}
 			}
-				break;
+			break;
 			case  OP_Load::NN_BC:
 				_RB_A = _RAM[_RPC + 2];
 				_RC_A = _RAM[_RPC + 1];
@@ -746,14 +763,14 @@ uint32_t main()
 				_RH_A = _RAM[position + 1];
 				_RL_A = _RAM[position];
 			}
-				break;
+			break;
 			case OP_Load::HL_NN:
 			{
 				uint32_t position = ReadWordAtAddress(_RPC + 1);
 				_RAM[position] = _RL_A;
 				_RAM[position + 1] = _RH_A;
 			}
-				break;
+			break;
 			case OP_Load::HL_SP:
 				_RSP = HLasWord();
 				break;
@@ -774,25 +791,25 @@ uint32_t main()
 				_RC_A = _RAM[_RSP++];
 				_RB_A = _RAM[_RSP++];
 			}
-				break;
+			break;
 			case OP_Stack::POP_DE:
 			{
 				_RE_A = _RAM[_RSP++];
 				_RD_A = _RAM[_RSP++];
 			}
-				break;
+			break;
 			case OP_Stack::POP_HL:
 			{
 				_RL_A = _RAM[_RSP++];
 				_RH_A = _RAM[_RSP++];
 			}
-				break;
+			break;
 			case OP_Stack::POP_AF:
 			{
 				_RF_A = _RAM[_RSP++];
 				_RA_A = _RAM[_RSP++];
 			}
-				break;
+			break;
 			case OP_ETS::E_DE_HL:
 			{
 				byte tempD = _RD_A;
@@ -802,7 +819,7 @@ uint32_t main()
 				_RH_A = tempD;
 				_RL_A = tempE;
 			}
-				break;
+			break;
 			case OP_ETS::E_AF_AF:
 			{
 				byte tempA = _RA_A;
@@ -812,7 +829,7 @@ uint32_t main()
 				_RA_B = tempA;
 				_RF_B = tempF;
 			}
-				break;
+			break;
 			case OP_ETS::E_EXX:
 			{
 				byte tempB = _RB_A;
@@ -834,7 +851,7 @@ uint32_t main()
 				_RH_B = tempH;
 				_RL_B = tempL;
 			}
-				break;
+			break;
 			case OP_ETS::E_HL_SP:
 			{
 				byte low = _RAM[_RSP];
@@ -844,7 +861,7 @@ uint32_t main()
 				_RL_A = low;
 				_RH_A = high;
 			}
-				break;
+			break;
 			case OP_Math::ADD_A_A:	Math_Add_A_R(_RA_A, 0);	break;
 			case OP_Math::ADD_B_A:	Math_Add_A_R(_RB_A, 0);	break;
 			case OP_Math::ADD_C_A:	Math_Add_A_R(_RC_A, 0);	break;
@@ -939,26 +956,26 @@ uint32_t main()
 				SetFlag(1, FLAG_H);
 				SetFlag(1, FLAG_N);
 			}
-				break;
+			break;
 			case OP_Main::OP_CCF:
 			{
 				SetFlag(GetFlag(FLAG_C) == 0, FLAG_C);
 				SetFlag(0, FLAG_N);
 			}
-				break;
+			break;
 			case OP_Main::OP_SCF:
 			{
 				SetFlag(1, FLAG_C);
 				SetFlag(0, FLAG_N);
 				SetFlag(0, FLAG_H);
 			}
-				break;
+			break;
 			case OP_Main::OP_DI:
 			{
 				_IFF1 = 0;
 				_IFF2 = 0;
 			}
-				break;
+			break;
 			case OP_Main::OP_EI:	_IFF1 = 1;	_IFF2 = 1;	break;
 			case OP_Math::ADD_BC_HL:	Math_Add_SS_HL(BCasWord(), 0);	break;
 			case OP_Math::ADD_DE_HL:	Math_Add_SS_HL(DEasWord(), 0);	break;
@@ -968,23 +985,23 @@ uint32_t main()
 			{
 				word newValue = BCasWord() + 1;
 				_RB_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RC_A = (newValue) & MAXBYTE;
+				_RC_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::INC_DE:
 			{
 				word newValue = DEasWord() + 1;
 				_RD_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RE_A = (newValue) & MAXBYTE;
+				_RE_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::INC_HL:
 			{
 				word newValue = HLasWord() + 1;
 				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RL_A = (newValue) & MAXBYTE;
+				_RL_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::INC_SP:
 				_RSP++;
 				break;
@@ -992,23 +1009,23 @@ uint32_t main()
 			{
 				word newValue = BCasWord() - 1;
 				_RB_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RC_A = (newValue) & MAXBYTE;
+				_RC_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::DEC_DE:
 			{
 				word newValue = DEasWord() - 1;
 				_RD_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RE_A = (newValue) & MAXBYTE;
+				_RE_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::DEC_HL:
 			{
 				word newValue = HLasWord() - 1;
 				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
-				_RL_A = (newValue) & MAXBYTE;
+				_RL_A = (newValue)& MAXBYTE;
 			}
-				break;
+			break;
 			case OP_Math::DEC_SP:
 				_RSP--;
 				break;
@@ -1020,66 +1037,66 @@ uint32_t main()
 				_RPC = newRPC;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_Stack::JR_NZ_E:
 				if (GetFlag(FLAG_Z) == 0)	_RPC += _RAM[_RPC + 1];
 				break;
 			case OP_CTRRTN::RST_00H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x00;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_08H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x08;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_10H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x10;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_18H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x18;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_20H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x20;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_28H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x28;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_30H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x30;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RST_38H:
 			{
-				Stack_Push_Word(_RPC);
+				Stack_Push_Word(_RPC + 1);
 				_RPC = 0x38;
 				opcost = 0;
 			}
-				break;
+			break;
 			case OP_CTRRTN::RET:
 				_RPC = Stack_Pop_Word();
 				opcost = 0;
@@ -1151,7 +1168,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_Z:
 			{
 				if (GetFlag(FLAG_Z) != 0)
@@ -1160,7 +1177,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_NC:
 			{
 				if (GetFlag(FLAG_C) == 0)
@@ -1169,7 +1186,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_C:
 			{
 				if (GetFlag(FLAG_C) != 0)
@@ -1178,7 +1195,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_PO:
 			{
 				if (GetFlag(FLAG_P) == 0)
@@ -1187,7 +1204,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_PE:
 			{
 				if (GetFlag(FLAG_P) != 0)
@@ -1196,7 +1213,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_P:
 			{
 				if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) == 0)
@@ -1205,7 +1222,7 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JP_N:
 			{
 				if ((GetFlag(FLAG_P) | GetFlag(FLAG_Z)) != 0)
@@ -1214,14 +1231,14 @@ uint32_t main()
 					opcost = 0;
 				}
 			}
-				break;
+			break;
 			case OP_RAS::RLCA:
 			{
 				uint32_t hbit = (_RA_A & 0x80) != 0;
 				_RA_A = ((_RA_A << 1) & MAXBYTE);
 				if (hbit)_RA_A |= 0x01;
 			}
-				break;
+			break;
 			case OP_Stack::JR_C_E:
 			{
 				if (GetFlag(FLAG_C) != 0)
@@ -1240,7 +1257,7 @@ uint32_t main()
 					opcost = 2;
 				}
 			}
-				break;
+			break;
 			case OP_Stack::JR_E: _RPC += static_cast<int8_t>(_RAM[_RPC + 1]);	break;
 			case OP_Stack::JR_Z: if (GetFlag(FLAG_Z) != 0)_RPC += static_cast<int8_t>(_RAM[_RPC + 1]);	break;
 			case OP_Stack::DJNZ:
@@ -1248,7 +1265,7 @@ uint32_t main()
 				_RB_A--;
 				if (_RB_A != 0) _RPC += static_cast<int8_t>(_RAM[_RPC + 1]);
 			}
-				break;
+			break;
 			case OP_RAS::CB:
 			{
 				opcost = 2;
@@ -1267,7 +1284,7 @@ uint32_t main()
 					}
 				}
 			}
-				break;
+			break;
 			case OP_RAS::RRC_A:
 			{
 				SetFlag((_RA_A & 0x01) != 0, FLAG_C);
@@ -1276,7 +1293,7 @@ uint32_t main()
 				SetFlag(0, FLAG_H);
 				SetFlag(0, FLAG_N);
 			}
-				break;
+			break;
 			case OP_RAS::RRA:
 			{
 				uint32_t currentCFlag = GetFlag(FLAG_C);
@@ -1286,7 +1303,7 @@ uint32_t main()
 				SetFlag(0, FLAG_H);
 				SetFlag(0, FLAG_N);
 			}
-				break;
+			break;
 			case OP_RAS::RLA:
 				RAS_RLA();
 				break;
@@ -1294,7 +1311,7 @@ uint32_t main()
 			{
 				//TODO THIS
 			}
-				break;
+			break;
 			default:
 			{
 				printf("Unkown opcode %i \n", _RAM[_RPC]);

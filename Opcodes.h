@@ -14,6 +14,8 @@ public:
 	static const int  OP_EI = 0xFB;
 
 	static const int  OP_ED_IM_1 = 0x56;
+
+	static const int OP_CBMODIFIER = 0xCB;
 };
 
 class OP_Stack
