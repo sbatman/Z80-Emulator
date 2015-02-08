@@ -14,6 +14,8 @@ public:
 	static const int  OP_EI = 0xFB;
 
 	static const int  OP_ED_IM_1 = 0x56;
+
+	static const int OP_CBMODIFIER = 0xCB;
 };
 
 class OP_Stack
@@ -366,6 +368,7 @@ class OP_CTRRTN
 {
 public:
 	static const int  CR_CALL = 0xCD;
+	static const int  CR_CALLNZ = 0xC4;
 
 	static const int  RST_00H = 0xC7;
 	static const int  RST_08H = 0xCF;
@@ -385,4 +388,11 @@ public:
 	static const int  RET_PE = 0xE8;
 	static const int  RET_P = 0xF0;
 	static const int  RET_N = 0xF8;
+};
+
+class OP_XX_CB
+{
+public:
+	static const int  CB_BIT_0_HL = 0x46;
+
 };
