@@ -94,6 +94,14 @@ void JumpToAddress(const byte h, const byte l)
 }
 
 ///	<summary>
+/// Jumps to the address provided
+///	</summary>
+void JumpToAddress(const word address)
+{
+	_RPC = address;
+}
+
+///	<summary>
 /// Jumps to the address stored in the provided address
 ///	</summary>
 void JumpToAddressAtAddress(const byte h, const  byte l)
@@ -116,16 +124,17 @@ uint32_t main()
 	Init();
 	printf("START\n");
 	LoadRomFromFile("Roms/48.bin");
+
 	while (true)
 	{
-
 		uint32_t next = _RAM[_RPC];
-		if (_RPC == 0x128c)
+		if (_RPC == 0x162c)
 		{
 			int g = 7;
 			g = g*g;
+		//	skipper = false;
 		}
-		if (DrawConsoleUpdate > (skipper?10000:0))
+		if (DrawConsoleUpdate > (skipper ? 100000 : 0))
 		{
 			DrawConsoleUpdate = 0;
 
@@ -505,23 +514,87 @@ uint32_t main()
 							{
 								word address = _RIY + _RAM[_RPC + 2];
 								byte value = ReadByteAtAddress(address);
-								SetFlag(value & (1 << 0), FLAG_Z);
-								SetFlag(value & (1 << 0), FLAG_P);
-								SetFlag(value & (1 << 0), FLAG_V);
+								SetFlag((value & (1 << 0)) > 0, FLAG_Z);
+								SetFlag((value & (1 << 0)) > 0, FLAG_P);
+								SetFlag((value & (1 << 0)) > 0, FLAG_V);
 								SetFlag(1, FLAG_H);
 								SetFlag(0, FLAG_N);
 								SetFlag(0, FLAG_S);
 								SetFlag(GetFlag(FLAG_5)& ((value >> 5) & 0x1), FLAG_5);
 								SetFlag(GetFlag(FLAG_3)& ((value >> 3) & 0x1), FLAG_3);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_BIT_1_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address);
+								SetFlag((value & (1 << 1)) > 0, FLAG_Z);
+								SetFlag((value & (1 << 1)) > 0, FLAG_P);
+								SetFlag((value & (1 << 1)) > 0, FLAG_V);
+								SetFlag(1, FLAG_H);
+								SetFlag(0, FLAG_N);
+								SetFlag(0, FLAG_S);
+								SetFlag(GetFlag(FLAG_5)& ((value >> 5) & 0x1), FLAG_5);
+								SetFlag(GetFlag(FLAG_3)& ((value >> 3) & 0x1), FLAG_3);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_SET_0_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) | (1 << 0);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_SET_1_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) | (1 << 1);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_SET_4_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) | (1 << 4);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_REST_1_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) & ~(1 << 1);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_REST_0_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) & ~(1 << 0);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_REST_4_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) & ~(1 << 4);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
+							}
+							case OP_XX_CB::CB_REST_5_HL:
+							{
+								word address = _RIY + _RAM[_RPC + 2];
+								byte value = ReadByteAtAddress(address) & ~(1 << 5);
+								WriteByteAtAddress(address, value);
+								opcost = 4;
 							}
 							break;
 							default:
 							{
-								printf("Unkown opcode IYCB:%i \n", _RAM[_RPC + 2]);
+								printf("Unkown opcode IYCB:%i \n", _RAM[_RPC + 3]);
 							}
 						}
 					}
-
+					break;
 					default:
 					{
 						printf("Unkown opcode IY:%i \n", _RAM[_RPC + 1]);
@@ -1016,7 +1089,7 @@ uint32_t main()
 			break;
 			case OP_Math::INC_HL:
 			{
-				word newValue =( HLasWord() + 1)&0xffff;
+				word newValue = (HLasWord() + 1) & 0xffff;
 				_RH_A = (newValue >> BYTEWIDTH) & MAXBYTE;
 				_RL_A = (newValue)& MAXBYTE;
 			}
@@ -1062,6 +1135,17 @@ uint32_t main()
 				word newRPC = ReadWordAtAddress(_RAM[_RPC + 1]);
 				_RPC += 3;
 				if (!GetFlag(FLAG_Z))
+				{
+					Stack_Push_Word(_RPC);
+					_RPC = newRPC;
+					opcost = 0;
+				}
+			}
+			case OP_CTRRTN::CR_CALLP:
+			{
+				word newRPC = ReadWordAtAddress(_RAM[_RPC + 1]);
+				_RPC += 3;
+				if (!GetFlag(FLAG_P))
 				{
 					Stack_Push_Word(_RPC);
 					_RPC = newRPC;
@@ -1188,9 +1272,8 @@ uint32_t main()
 					opcost = 0;
 				}
 				break;
-			case OP_Stack::JP:
-				JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);
-				break;
+			case OP_Stack::JP:				JumpToAddress(_RAM[_RPC + 2], _RAM[_RPC + 1]);	opcost = 0;			break;
+			case OP_Stack::JP_HL:				JumpToAddress(HLasWord());	opcost = 0;			break;
 			case OP_Stack::JP_NZ:
 			{
 				if (GetFlag(FLAG_Z) == 0)
@@ -1309,6 +1392,13 @@ uint32_t main()
 					case OP_RAS::RL_E:	_RE_A = RAS_RL(_RE_A);	break;
 					case OP_RAS::RL_H:	_RH_A = RAS_RL(_RH_A);	break;
 					case OP_RAS::RL_L:	_RL_A = RAS_RL(_RL_A);	break;
+					case OP_RAS::RLC_A:	_RA_A = RAS_RLC(_RA_A);	break;
+					case OP_RAS::RLC_B:	_RB_A = RAS_RLC(_RB_A);	break;
+					case OP_RAS::RLC_C:	_RC_A = RAS_RLC(_RC_A);	break;
+					case OP_RAS::RLC_D:	_RD_A = RAS_RLC(_RD_A);	break;
+					case OP_RAS::RLC_E:	_RE_A = RAS_RLC(_RE_A);	break;
+					case OP_RAS::RLC_H:	_RH_A = RAS_RLC(_RH_A);	break;
+					case OP_RAS::RLC_L:	_RL_A = RAS_RLC(_RL_A);	break;
 					default:
 					{
 						printf("Unkown opcode CB : %i \n", _RAM[_RPC + 1]);

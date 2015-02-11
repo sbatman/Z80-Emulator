@@ -64,7 +64,7 @@ void Math_Sub_SS_HL(word value, bool addCarry)
 
 void Math_Add_A_R(byte value, bool addCarry)
 {
-	byte result = value + _RA_A;
+	word result = value + _RA_A;
 	SetFlag((((value & 0x0F) + (_RA_A & 0x0F)) & 0x10) != 0, FLAG_H);
 	if (addCarry)result += GetFlag(FLAG_C);
 	SetFlag(0, FLAG_N);
@@ -75,7 +75,7 @@ void Math_Add_A_R(byte value, bool addCarry)
 	uint32_t partBSign = value & 0x80;
 	uint32_t resultSign = result & 0x80;
 	SetFlag(partASign == partBSign && resultSign != partASign, FLAG_P);
-	_RA_A = result;
+	_RA_A = result & 0xff;
 }
 void Math_Sub_A_R(byte value, bool addCarry)
 {

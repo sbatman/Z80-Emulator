@@ -37,6 +37,7 @@ public:
 	static const int JR_C_E = 0x38;
 	static const int JR_NZ_E = 0x20;
 	static const int JP = 0xC3;
+	static const int JP_HL = 0xE9;
 	static const int JP_NZ = 0xC2;
 	static const int JP_Z = 0xCA;
 	static const int JP_NC = 0xD2;
@@ -67,6 +68,13 @@ public:
 	static const int RL_E = 0x13;
 	static const int RL_H = 0x14;
 	static const int RL_L = 0x15;
+	static const int RLC_A = 0x07;
+	static const int RLC_B = 0x00;
+	static const int RLC_C = 0x01;
+	static const int RLC_D = 0x02;
+	static const int RLC_E = 0x03;
+	static const int RLC_H = 0x04;
+	static const int RLC_L = 0x05;
 };
 
 class OP_Math
@@ -368,6 +376,7 @@ class OP_CTRRTN
 {
 public:
 	static const int  CR_CALL = 0xCD;
+	static const int  CR_CALLP = 0xF4;
 	static const int  CR_CALLNZ = 0xC4;
 
 	static const int  RST_00H = 0xC7;
@@ -393,6 +402,13 @@ public:
 class OP_XX_CB
 {
 public:
-	static const int  CB_BIT_0_HL = 0x46;
-
+	static const int CB_BIT_0_HL = 0x46;
+	static const int CB_BIT_1_HL = 0x4E;
+	static const int CB_SET_0_HL = 0xC6;
+	static const int CB_SET_1_HL = 0xCE;
+	static const int CB_SET_4_HL = 0xE6;
+	static const int CB_REST_1_HL = 0x8E;
+	static const int CB_REST_4_HL = 0xA6;
+	static const int CB_REST_5_HL = 0xAE;
+	static const int CB_REST_0_HL = 0x86;
 };

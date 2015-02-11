@@ -13,6 +13,19 @@ byte RAS_RL(const byte value)
 	return returnValue;
 }
 
+byte RAS_RLC(const byte value)
+{
+	byte returnValue = value;	
+	SetFlag((returnValue & 0x80) != 0, FLAG_C);
+	bool carrySet = GetFlag(FLAG_C) != 0;
+	returnValue <<= 1;
+	returnValue |= static_cast<byte>(carrySet);
+	SetFlag(0, FLAG_H);
+	SetFlag(0, FLAG_N);
+	SetFlag(_ParityLookupTable[returnValue] != 0, FLAG_P);
+	return returnValue;
+}
+
 void RAS_RLA()
 {
 	bool carrySet = GetFlag(FLAG_C);
