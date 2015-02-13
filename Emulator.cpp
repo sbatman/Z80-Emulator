@@ -128,7 +128,7 @@ uint32_t main()
 	while (true)
 	{
 		uint32_t next = _RAM[_RPC];
-		if (_RPC == 0x162c)
+		if (_RPC == 0x0D99)
 		{
 			int g = 7;
 			g = g*g;
@@ -1377,7 +1377,7 @@ uint32_t main()
 			case OP_Stack::DJNZ:
 			{
 				_RB_A--;
-				if (_RB_A != 0) _RPC += static_cast<int8_t>(_RAM[_RPC + 1]);
+				if (_RB_A != 0) _RPC = (_RPC+ static_cast<int8_t>(_RAM[_RPC + 1]))&0xffff;
 			}
 			break;
 			case OP_RAS::CB:
